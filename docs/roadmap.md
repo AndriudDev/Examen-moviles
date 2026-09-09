@@ -11,19 +11,24 @@ Bitácora de avistamiento de aves (React Native + Expo SDK 57). Estado de avance
 | Navegación | 3 rutas (`app/index.tsx`, `app/registrar.tsx`, `app/detalle/[id].tsx`) + `_layout.tsx` con Stack (RF-06 base) |
 | Modelo | Tipos `Avistamiento`/`Clima`, `nuevaId()`, `nuevaFechaLocal()` en `modelo/Avistamiento.ts` |
 | Validación | RF-01 completa en `modelo/validacion.ts` (foto, ubicación, nombre, cantidad) |
-| Estados | `EstadoVacio`/`EstadoCarga`/`EstadoError` en `vista/` (aún sin consumir) |
-| Dependencias | `expo-camera`, `expo-location`, `expo-file-system`, `AsyncStorage` instaladas, sin uso |
+| Registro (RF-01) | Formulario real en `app/registrar.tsx` con foto del momento (`expo-camera`), GPS automático + botón «Actualizar ubicación» (`expo-location`), validación por campo y confirmación al guardar |
+| Persistencia (guardado) | `modelo/RepositoryAvistamientos.ts`: metadatos en AsyncStorage + foto copiada a archivo persistente (`expo-file-system`); la lectura llega con la fase RF-03 |
+| Controlador | `controlador/ControladorRegistro.ts` valida y guarda; `controlador/camara.ts` y `controlador/ubicacion.ts` aíslan `expo-camera`/`expo-location` (patrón Adapter) |
+| Estados | `EstadoVacio`/`EstadoCarga`/`EstadoError` en `vista/` (consumidos en carga de GPS, cámara y guardado) |
+| Dependencias | `expo-camera`, `expo-location`, `expo-file-system`, `AsyncStorage` instaladas y en uso |
 
 ---
 
 ## Pendientes por fase
 
-### 1. RF-01 Registro — `app/registrar.tsx` (hoy es placeholder)
+### 1. RF-01 Registro — `app/registrar.tsx` ✅ (fase 1 completada)
 
-- [ ] Formulario real: nombre, cantidad, fecha editable, notas (la validación ya existe)
-- [ ] Captura de foto con `expo-camera` → `BorradorAvistamiento.fotoUri`
-- [ ] GPS con `expo-location` → `coordenadas`
-- [ ] Guardado del avistamiento en el repositorio (ver RF-05)
+- [x] Formulario real: nombre, cantidad, fecha editable, notas (la validación ya existía)
+- [x] Captura de foto con `expo-camera` → `BorradorAvistamiento.fotoUri` (calidad 0.7 para miniaturas ligeras)
+- [x] GPS con `expo-location` → `coordenadas` (automático al abrir + botón «Actualizar ubicación», timeout 10 s)
+- [x] Guardado del avistamiento en el repositorio: AsyncStorage + foto persistente (`modelo/RepositoryAvistamientos.ts`)
+
+> Pendiente heredado para la fase RF-03: la **lectura** del repositorio (listar/cargar por id), que hoy no tiene consumidor.
 
 ### 2. RF-02 Clima Open-Meteo — no existe nada
 
@@ -90,3 +95,4 @@ Bitácora de avistamiento de aves (React Native + Expo SDK 57). Estado de avance
 - Scaffold: arquitectura MVC, navegación, modelo y validación (`first commit`).
 - App movida a la raíz del repo (`refactor: mover app a la raíz del repo`).
 - Guía de estilo `docs/style.md` creada.
+- Fase 1 (RF-01 Registro): formulario real en `app/registrar.tsx`, adaptadores de cámara y GPS (`controlador/camara.ts`, `controlador/ubicacion.ts`), `controlador/ControladorRegistro.ts` y guardado con foto persistente (`modelo/RepositoryAvistamientos.ts`, RF-05 save path).

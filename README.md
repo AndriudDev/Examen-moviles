@@ -10,7 +10,7 @@ Bitácora de avistamiento de aves en terreno. Proyecto de la asignatura **Desarr
 
 ## Estado actual
 
-El proyecto está en fase de **scaffold**: la arquitectura y la navegación están montadas; las pantallas de periféricos y datos están en construcción.
+El proyecto tiene implementada la **fase 1 del roadmap (RF-01 Registro)**: el formulario real, con foto del momento y GPS, guarda en el dispositivo. Las fases de clima, listado y detalle siguen en construcción.
 
 **Funciona hoy:**
 
@@ -18,15 +18,14 @@ El proyecto está en fase de **scaffold**: la arquitectura y la navegación est�
 - Pantalla de listado con estado vacío diseñado y acceso directo al registro.
 - Tema de UI para uso en terreno: alto contraste, objetivos táctiles grandes.
 - Modelo de dominio: entidad `Avistamiento`/`Clima` y validación del formulario (RF-01).
+- Registro completo (RF-01): foto tomada en el momento con `expo-camera`, GPS automático con botón «Actualizar ubicación» (`expo-location`, timeout 10 s), fecha editable, cantidad mínima 1 y notas; valida por campo y confirma al guardar.
+- Persistencia del guardado (RF-05, save path): metadatos en `AsyncStorage`, foto copiada de la caché a un archivo persistente con `expo-file-system`.
 
 **En construcción (próximas fases):**
 
-- Captura de foto con la cámara del dispositivo (`expo-camera`).
-- Ubicación GPS automática + lugar legible (`expo-location`).
-- Clima del momento con Open-Meteo (caché por ubicación, timeout, reintento).
-- Persistencia local: `AsyncStorage` para los datos y sistema de archivos para las fotos.
-- Listado con datos reales (miniatura, fecha, temperatura, filtro).
-- Detalle completo: foto grande, clima y ubicación legibles.
+- Clima del momento con Open-Meteo (caché por ubicación, timeout, reintento) (RF-02).
+- Lectura del repositorio y listado con datos reales: miniatura, fecha, temperatura, filtro (RF-03).
+- Detalle completo: foto grande, clima y ubicación legibles con reverse geocoding (RF-04).
 
 ---
 
@@ -55,6 +54,11 @@ app/          VISTA: rutas de Expo Router (navegación)
 modelo/       MODELO: datos, reglas de negocio y persistencia
   Avistamiento.ts   Entidad y tipos
   validacion.ts     Reglas del formulario (RF-01)
+  RepositoryAvistamientos.ts  Persistencia: AsyncStorage + fotos (RF-05)
+controlador/  CONTROLADOR: orquesta vista ↔ modelo y periféricos
+  ControladorRegistro.ts  Validación + guardado (RF-01)
+  camara.ts             Adaptador expo-camera (foto del momento)
+  ubicacion.ts          Adaptador expo-location (GPS con timeout)
 vista/        VISTA: componentes visuales compartidos
   tema.ts           Colores y estilos (contraste para terreno)
   Estado*.tsx       Estados de carga, error y vacío
