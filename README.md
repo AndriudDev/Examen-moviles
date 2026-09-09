@@ -58,7 +58,7 @@ modelo/       MODELO: datos, reglas de negocio y persistencia
 vista/        VISTA: componentes visuales compartidos
   tema.ts           Colores y estilos (contraste para terreno)
   Estado*.tsx       Estados de carga, error y vacío
-docs/         brief.md (idea) y stack.md (arquitectura)
+docs/         brief.md (idea), stack.md (arquitectura), style.md (estilo visual) y roadmap.md (plan de trabajo)
 ```
 
 La arquitectura y las decisiones técnicas se explican en [docs/stack.md](docs/stack.md).
@@ -101,3 +101,15 @@ npm start
 - RF-06 navegación coherente (volver atrás siempre disponible)
 
 El detalle funcional completo está en [docs/brief.md](docs/brief.md).
+
+---
+
+## Más comandos
+
+| Comando | Qué hace |
+|---|---|
+| `npm run android` | Abre la app en un dispositivo Android conectado (emulador de Android Studio o teléfono con Expo Go) |
+| `npm run ios` | Abre la app en el simulador de iOS (solo macOS) |
+| `npm run web` | Abre la app en el navegador (solo desarrollo) |
+| `npx expo-doctor` | Verifica que el entorno esté sano (versiones de Node, dependencias) |
+| `npm start -- --tunnel` | Expone el dev server por túnel (útil cuando el teléfono no está en el mismo Wi-Fi) |
