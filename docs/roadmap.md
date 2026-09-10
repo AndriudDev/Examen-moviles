@@ -15,6 +15,7 @@ Bitácora de avistamiento de aves (React Native + Expo SDK 57). Estado de avance
 | Clima (RF-02) | `modelo/ClimaApi.ts` consulta Open-Meteo tras capturar la ubicación: timeout real (AbortController 8 s) + 1 reintento + caché por ubicación con TTL 15 min; si falla, la app guarda igual sin clima. `modelo/clima.ts` traduce el `weather_code` WMO a texto + ícono |
 | Persistencia (guardado) | `modelo/RepositoryAvistamientos.ts`: metadatos en AsyncStorage + foto copiada a archivo persistente (`expo-file-system`); la lectura llega con la fase RF-03 |
 | Controlador | `controlador/ControladorRegistro.ts` valida y guarda; `controlador/camara.ts` y `controlador/ubicacion.ts` aíslan `expo-camera`/`expo-location` (patrón Adapter) |
+| Detalle (RF-04) | `app/detalle/[id].tsx` + `controlador/ControladorDetalle.ts`: carga por id (`leerAvistamientoPorId`), foto grande, clima y lugar legibles (reverse geocoding con timeout 8 s, degrada «no disponible»); estados carga/error/inexistente |
 | Estados | `EstadoVacio`/`EstadoCarga`/`EstadoError` en `vista/` (consumidos en carga de GPS, cámara y guardado) |
 | Tema | Sistema oscuro **inspirado en Bootstrap dark v5.3** en `vista/tema.ts` (`#212529`/`#2B3035`/`#495057`, botones radio 6, tarjetas borde 1px) + `userInterfaceStyle: "dark"`; header del Stack fusionado con el cuerpo |
 | Dependencias | `expo-camera`, `expo-location`, `expo-file-system`, `AsyncStorage` instaladas y en uso |
@@ -30,8 +31,6 @@ Bitácora de avistamiento de aves (React Native + Expo SDK 57). Estado de avance
 - [x] GPS con `expo-location` → `coordenadas` (automático al abrir + botón «Actualizar ubicación», timeout 10 s)
 - [x] Guardado del avistamiento en el repositorio: AsyncStorage + foto persistente (`modelo/RepositoryAvistamientos.ts`)
 
-> Pendiente heredado para la fase RF-03: la **lectura** del repositorio (listar/cargar por id), que hoy no tiene consumidor.
-
 ### 2. RF-02 Clima Open-Meteo ✅ (fase 2 completada)
 
 - [x] Servicio HTTP a Open-Meteo (`modelo/ClimaApi.ts`, lat/lng → `Clima`) con timeout real (AbortController 8 s) y 1 reintento
@@ -39,19 +38,21 @@ Bitácora de avistamiento de aves (React Native + Expo SDK 57). Estado de avance
 - [x] Flujo "guardar sin clima si falla": `consultarClima` en `modelo/ClimaApi.ts` nunca lanza; la vista consulta tras el GPS y guarda igual sin `clima` (RF-02)
 - [x] Traducción WMO → texto + ícono en `modelo/clima.ts` (patrón Factory, stack.md §9)
 
-### 3. RF-03 Listado — `app/index.tsx` (siempre muestra el estado vacío)
+### 3. RF-03 Listado — `app/index.tsx` ✅ (fase 3 completada)
 
-- [ ] Repositorio de datos (AsyncStorage) para leer avistamientos
-- [ ] Carga real desde el repositorio, ordenado por fecha desc
-- [ ] Tarjeta por avistamiento (miniatura, nombre, cantidad, fecha, temperatura)
-- [ ] Filtro (el README lo lista; no existe)
-- [ ] Transición vacío → listado con datos
+- [x] Repositorio de datos (AsyncStorage) para leer avistamientos: `leerAvistamientos()` en `modelo/RepositoryAvistamientos.ts` (la lectura que faltaba desde la fase 1)
+- [x] Carga real desde el repositorio, ordenado por fecha desc: `controlador/ControladorListado.ts`
+- [x] Tarjeta por avistamiento (`vista/TarjetaAvistamiento.tsx`): miniatura, nombre, cantidad, fecha legible y temperatura, o «Clima no disponible» si no se obtuvo (RF-02)
+- [x] Filtro por nombre del ave (insensible a mayúsculas) en `controlador/ControladorListado.ts` + campo sobre el listado
+- [x] Transición vacío → listado con datos: estado carga al abrir, vacío diseñado si no hay registros, error con reintento, tarjetas con datos reales
+- [x] Tarjetas enlazadas al detalle (`router.push('/detalle/<id>')`, adelanta RF-06)
 
-### 4. RF-04 Detalle — `app/detalle/[id].tsx` (hoy es placeholder)
+### 4. RF-04 Detalle — `app/detalle/[id].tsx` ✅ (fase 4 completada)
 
-- [ ] Buscar avistamiento por id en el repositorio
-- [ ] Foto grande persistente
-- [ ] Clima y lugar legibles (reverse geocoding con `expo-location`)
+- [x] Buscar avistamiento por id en el repositorio (`leerAvistamientoPorId` en `modelo/RepositoryAvistamientos.ts`)
+- [x] Foto grande persistente (la URI guardada por el repositorio, RF-05)
+- [x] Clima y lugar legibles: reverse geocoding con `expo-location` en `controlador/ubicacion.ts` (`obtenerLugarLegible`, timeout 8 s, degrada a «Lugar no disponible» sin bloquear); clima con ícono + condición + temperatura + humedad, nunca el `weather_code` crudo
+- [x] Orquestación en `controlador/ControladorDetalle.ts`; estados carga/error/inexistente con reintento y vuelta al listado (RF-06)
 
 ### 5. RF-05 Persistencia — no existe nada
 
@@ -61,7 +62,7 @@ Bitácora de avistamiento de aves (React Native + Expo SDK 57). Estado de avance
 
 ### 6. RF-06 Navegación — casi completo
 
-- [ ] Enlazar tarjetas del listado real → detalle
+- [x] Enlazar tarjetas del listado real → detalle (fase 3)
 - [ ] Volver desde cada pantalla al origen correcto
 
 ### 7. Estilo — spec lista en docs/style.md, nada implementado
@@ -100,3 +101,5 @@ Bitácora de avistamiento de aves (React Native + Expo SDK 57). Estado de avance
 - Guía de estilo `docs/style.md` creada.
 - Fase 1 (RF-01 Registro): formulario real en `app/registrar.tsx`, adaptadores de cámara y GPS (`controlador/camara.ts`, `controlador/ubicacion.ts`), `controlador/ControladorRegistro.ts` y guardado con foto persistente (`modelo/RepositoryAvistamientos.ts`, RF-05 save path).
 - Fase 2 (RF-02 Clima Open-Meteo): `modelo/ClimaApi.ts` (fetch con timeout + reintento + caché por ubicación con TTL), `modelo/clima.ts` (WMO → texto/ícono) e integración en el registro: tras capturar el GPS se consulta el clima y, si la API falla, se guarda igual sin clima.
+- Fase 3 (RF-03 Listado): lectura del repositorio (`leerAvistamientos`), `controlador/ControladorListado.ts` (carga ordenada por fecha desc + filtro por nombre), `vista/TarjetaAvistamiento.tsx` (miniatura, nombre, cantidad, fecha, temperatura o «sin clima») y `app/index.tsx` con estados carga/error/vacío; las tarjetas navegan al detalle (RF-06).
+- Fase 4 (RF-04 Detalle): `controlador/ControladorDetalle.ts` + `leerAvistamientoPorId` en el repositorio; pantalla `app/detalle/[id].tsx` con foto grande, todos los datos, clima legible (ícono + condición + temperatura + humedad) y lugar legible vía reverse geocoding (`obtenerLugarLegible` en `controlador/ubicacion.ts`, timeout 8 s, degrada sin bloquear); estados de carga/error/inexistente con reintento y vuelta al listado; `vista/formato.ts` compartido con la tarjeta del listado.

@@ -10,22 +10,22 @@ Bitácora de avistamiento de aves en terreno. Proyecto de la asignatura **Desarr
 
 ## Estado actual
 
-El proyecto tiene implementadas las **fases 1 y 2 del roadmap**: el formulario real con foto del momento y GPS, el clima del momento con Open-Meteo (con caché, timeout y reintento), y el guardado en el dispositivo. Las fases de listado y detalle siguen en construcción.
+El proyecto tiene implementadas las **fases 1, 2, 3 y 4 del roadmap**: el formulario real con foto del momento y GPS, el clima del momento con Open-Meteo (con caché, timeout y reintento), el guardado en el dispositivo, el **listado con los datos reales** (RF-03) y el **detalle completo** (RF-04).
 
 **Funciona hoy:**
 
 - Navegación con Expo Router (stack nativo): listado, registro y detalle con id dinámico.
-- Pantalla de listado con estado vacío diseñado y acceso directo al registro.
+- Pantalla principal de **listado real (RF-03)**: carga desde el repositorio ordenada por fecha (más reciente primero), tarjetas con miniatura, nombre, cantidad, fecha y temperatura (o indicador de «clima no disponible»), **filtro por nombre del ave** y estado vacío diseñado cuando no hay avistamientos; las tarjetas navegan al detalle.
+- **Detalle completo (RF-04)**: foto grande persistente, todos los datos del avistamiento, clima legible (ícono + condición + temperatura + humedad, nunca el `weather_code` crudo) y **lugar legible** con reverse geocoding (`reverseGeocodeAsync` de `expo-location`); estados de carga, error con reintento y aviso «lugar/clima no disponibles» sin bloquear la vista (RF-06: vuelta al listado siempre disponible).
 - Tema de UI para uso en terreno: **oscuro estilo Bootstrap dark** (fondo `#212529`, tarjetas con borde fino, botones redondeados, verde de marca como acción), alto contraste, objetivos táctiles grandes.
 - Modelo de dominio: entidad `Avistamiento`/`Clima`, validación del formulario (RF-01) y traducción del `weather_code` WMO a texto + ícono (`modelo/clima.ts`).
 - Registro completo (RF-01): foto tomada en el momento con `expo-camera`, GPS automático con botón «Actualizar ubicación» (`expo-location`, timeout 10 s), fecha editable, cantidad mínima 1 y notas; valida por campo y confirma al guardar.
 - Clima del momento (RF-02): al capturar la ubicación se consulta **Open-Meteo** (`modelo/ClimaApi.ts`) con timeout real (AbortController 8 s) + 1 reintento y **caché por ubicación con TTL 15 min**; si la API falla o no hay red, el avistamiento se guarda igual, **sin clima**, y la pantalla avisa con opción a reintentar.
-- Persistencia del guardado (RF-05, save path): metadatos en `AsyncStorage`, foto copiada de la caché a un archivo persistente con `expo-file-system`.
+- Persistencia (RF-05): metadatos en `AsyncStorage`, foto copiada de la caché a un archivo persistente con `expo-file-system`; el listado y el detalle leen el mismo repositorio al arrancar.
 
 **En construcción (próximas fases):**
 
-- Lectura del repositorio y listado con datos reales: miniatura, fecha, temperatura, filtro (RF-03).
-- Detalle completo: foto grande, clima y ubicación legibles con reverse geocoding (RF-04).
+- Estilo visual según `docs/style.md` (tokens, cabecera, FAB, tarjetas nuevas, estados) y verificación final en teléfono con Expo Go.
 
 ---
 
@@ -59,10 +59,13 @@ modelo/       MODELO: datos, reglas de negocio y persistencia
   RepositoryAvistamientos.ts  Persistencia: AsyncStorage + fotos (RF-05)
 controlador/  CONTROLADOR: orquesta vista ↔ modelo y periféricos
   ControladorRegistro.ts  Validación + guardado (RF-01)
+  ControladorListado.ts   Carga ordenada + filtro (RF-03)
+  ControladorDetalle.ts   Carga por id + lugar legible (RF-04)
   camara.ts             Adaptador expo-camera (foto del momento)
-  ubicacion.ts          Adaptador expo-location (GPS con timeout)
+  ubicacion.ts          Adaptador expo-location (GPS + reverse geocoding)
 vista/        VISTA: componentes visuales compartidos
   tema.ts           Colores y estilos (contraste para terreno)
+  formato.ts        Fechas legibles (compartido listado/detalle)
   Estado*.tsx       Estados de carga, error y vacío
 docs/         brief.md (idea), stack.md (arquitectura), style.md (estilo visual) y roadmap.md (plan de trabajo)
 ```

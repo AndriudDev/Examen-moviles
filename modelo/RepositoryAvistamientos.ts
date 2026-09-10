@@ -58,3 +58,18 @@ export async function guardarAvistamiento(avistamiento: Avistamiento): Promise<v
   lista.push(avistamiento);
   await AsyncStorage.setItem(CLAVE_LISTA, JSON.stringify(lista));
 }
+
+/**
+ * Lee todos los avistamientos guardados (RF-03/RF-05).
+ * Devuelve el contenido tal cual vive en AsyncStorage; ordenar y filtrar
+ * es responsabilidad del controlador de listado (ControladorListado).
+ */
+export async function leerAvistamientos(): Promise<Avistamiento[]> {
+  return leerLista();
+}
+
+/** Lee un avistamiento por id; `undefined` si no existe (RF-04). */
+export async function leerAvistamientoPorId(id: string): Promise<Avistamiento | undefined> {
+  const lista = await leerLista();
+  return lista.find((avistamiento) => avistamiento.id === id);
+}

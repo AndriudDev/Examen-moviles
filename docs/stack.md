@@ -156,10 +156,11 @@ GET https://api.open-meteo.com/v1/forecast
 
 - En el detalle (RF‑04) se muestra: ícono + condición + temperatura (°C) + humedad (%), y si no hay clima, un indicador «Clima no disponible» (la app igual guardó el registro).
 
-### 6.4 Ubicación legible (RF‑04)
+### 6.4 Ubicación legible (RF-04)
 
-- **Principal:** `reverseGeocodeAsync(latitude, longitude)` de `expo-location` (implica configurar una API key en el proyecto; sin key no responde). Resultado (`formattedAddress`) se muestra en el detalle como «lugar».
-- **Plan B (si no se puede usar la key):** las opciones que da el propio enunciado — el endpoint de geocoding de Open-Meteo, otra API gratuita, o guardar una referencia escrita por el usuario. Se implementa en el mismo adaptador `controlador/ubicacion.ts`. La decisión final y su motivo se documentan en el informe, como pide la rúbrica.
+- **Implementado:** `reverseGeocodeAsync(latitude, longitude)` de `expo-location`, en el adaptador `controlador/ubicacion.ts` (`obtenerLugarLegible`). En el SDK 57 no exige API key: Android usa el geocoder del sistema y iOS `CLGeocoder`. El resultado se muestra como dirección entendible («formattedAddress» en Android; en iOS se compone con los componentes disponibles: calle, distrito, ciudad, región, país). Con timeout de 8 s y sin bloquear la pantalla: si falla (permiso denegado, sin red o sin resultado) el detalle degrada a «Lugar no disponible» — nunca coordenadas crudas. En web (solo desarrollo) el geocoder no aplica y degrada igual.
+- `lugar` es un campo opcional del `Avistamiento`: si llegara a guardarse, el detalle lo usa sin volver a consultar.
+- **No usado (plan B del enunciado):** endpoint de geocoding de Open-Meteo ni referencia escrita por el usuario; la decisión de usar el geocoder del sistema (sin key) se documenta también en el informe.
 
 ---
 
@@ -240,7 +241,7 @@ En el informe: elegir **tres**, y para cada uno mostrar el fragmento concreto de
 
 | Riesgo | Mitigación |
 |---|---|
-| `reverseGeocodeAsync` puede exigir una API key | Plan B documentado (§6.4); se decide en la fase 5 |
+| `reverseGeocodeAsync` puede exigir una API key | En SDK 57 no exige key (geocoder del sistema); si falla, el detalle degrada a «Lugar no disponible» (§6.4) |
 | AsyncStorage lleno / fotos pesadas | Fotos como archivos (§5); miniaturas limitadas en el listado (§8.3) |
 | Emulador sin cámara ni GPS confiable | Demo siempre en teléfono real con Expo Go (así lo pide la entrega) |
 | Permisos rechazados por el usuario | Estados de error + explicación; la app no se rompe (§6.1–6.2) |
