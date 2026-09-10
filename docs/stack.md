@@ -59,6 +59,7 @@ avistaves/
 │   ├── camara.ts               # expo-camera: permisos, captura (adaptador)
 │   └── ubicacion.ts            # expo-location: GPS + reverse geocode (adaptador)
 ├── vista/                      # VISTA — componentes compartidos
+│   ├── Toast.tsx               # Confirmación toast sobre el Stack (raíz, RF-06)
 │   ├── TarjetaAvistamiento.tsx # Tarjeta del listado (RF-03)
 │   ├── EstadoVacio.tsx         # Estado sin avistamientos (RF-03)
 │   ├── EstadoCarga.tsx         # Indicador «cargando» (toda operación async)
@@ -167,7 +168,7 @@ GET https://api.open-meteo.com/v1/forecast
 ## 7. Navegación (RF‑06)
 
 - **Expo Router**: rutas por archivos en `app/` — `index` (listado), `registrar`, `detalle/[id]`.
-- Transiciones: listado → detalle con `Link`/`router.push`; «volver atrás» con `router.back()`; tras guardar (RF‑01), redirección explícita al listado.
+- Transiciones: listado → detalle con `Link`/`router.push`; «volver atrás» con `router.back()`; tras guardar (RF‑01), **toast de confirmación (`vista/Toast.tsx`, en la raíz) y redirección directa al listado**.
 - No hay rutas que atrapen al usuario: cada pantalla ofrece vuelta al listado o atrás.
 
 ---

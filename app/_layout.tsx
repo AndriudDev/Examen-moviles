@@ -1,6 +1,8 @@
 import { DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+import { View } from 'react-native';
 
 import { color } from '../vista/tema';
+import { ToastEnraiz } from '../vista/Toast';
 
 /**
  * Tema del navegador de pila (expo-router): sin él, el header web se
@@ -30,11 +32,15 @@ const temaOscuro = {
 export default function LayoutRaiz() {
   return (
     <ThemeProvider value={temaOscuro}>
-      <Stack
-        screenOptions={{
-          headerShown: false,
-        }}
-      />
+      <View style={{ flex: 1 }}>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+          }}
+        />
+        {/* Confirmación toast: vive sobre el Stack para sobrevivir a la navegación. */}
+        <ToastEnraiz />
+      </View>
     </ThemeProvider>
   );
 }

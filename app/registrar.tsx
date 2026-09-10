@@ -15,12 +15,15 @@ import { CampoTexto } from '../vista/CampoTexto';
 import { EstadoCarga } from '../vista/EstadoCarga';
 import { EstadoError } from '../vista/EstadoError';
 import { color, estilo, tamano, tipografia } from '../vista/tema';
+import { mostrarToast } from '../vista/Toast';
 
 /**
  * Pantalla de registro (RF-01): formulario real con foto tomada en el
  * momento, GPS automático (con botón «Actualizar ubicación») y guardado
  * en el repositorio local. Cada operación asíncrona muestra su estado
- * (carga/error) y rechazar permisos no rompe la app.
+ * (carga/error) y rechazar permisos no rompe la app. Al guardar con éxito
+ * muestra un toast de confirmación (vista/Toast.tsx) y vuelve directo al
+ * listado (RF-01/RF-06).
  * Estilado (style.md): cabecera compartida, campos con foco verde + glow
  * (CampoTexto) y CTA principal con icono + texto.
  */
@@ -64,7 +67,6 @@ export default function PantallaRegistro() {
 
   const [erroresFormulario, setErroresFormulario] = useState<ErroresValidacion>({});
   const [guardando, setGuardando] = useState(false);
-  const [guardadoOk, setGuardadoOk] = useState(false);
   const [errorGuardado, setErrorGuardado] = useState<string | undefined>(undefined);
 
   useEffect(() => {
@@ -141,7 +143,14 @@ export default function PantallaRegistro() {
     };
     const resultado = await guardarRegistro(borrador);
     if (resultado.ok) {
-      setGuardadoOk(true);
+      // RF-01: confirmación con toast (sobrevive a la navegación desde la
+      // raíz) y vuelta directa al listado, que recarga con useFocusEffect.
+      mostrarToast('Avistamiento agregado');
+      if (router.canGoBack()) {
+        router.back();
+      } else {
+        router.push('/');
+      }
     } else if (resultado.error) {
       setErrorGuardado(resultado.error);
     } else {
@@ -157,12 +166,9 @@ export default function PantallaRegistro() {
         subtitulo="Foto y ubicación se capturan en el momento; guarda con la cámara del dispositivo."
       />
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: tamano.espacioGrande }}>
-        {guardadoOk ? (
-          renderConfirmacion(() => (router.canGoBack() ? router.back() : router.push('/')))
-        ) : (
-          <>
-            <Pressable
-              accessibilityLabel="Volver al listado"
+        <>
+          <Pressable
+            accessibilityLabel="Volver al listado"
               onPress={() => (router.canGoBack() ? router.back() : router.push('/'))}
               style={estilo.botonSecundario}
             >
@@ -398,7 +404,6 @@ export default function PantallaRegistro() {
                 espaciador evita que el botón quede pegado/cortado al borde de la pantalla. */}
             <View style={{ height: tamano.espacioGrande * 2 }} />
           </>
-        )}
       </ScrollView>
     </View>
   );
@@ -409,28 +414,4 @@ function avisoDeError(mensaje?: string) {
     return null;
   }
   return <Text style={{ fontSize: 14, color: color.peligro, marginTop: 6 }}>{mensaje}</Text>;
-}
-
-function renderConfirmacion(volverAlListado: () => void) {
-  return (
-    <View>
-      <Text style={tipografia.seccion}>Avistamiento guardado</Text>
-      <Text style={[tipografia.cuerpo, { marginTop: tamano.espacio }]}>
-        La foto y los datos quedaron guardados en el dispositivo.
-      </Text>
-      <Pressable
-        accessibilityLabel="Volver al listado"
-        onPress={volverAlListado}
-        style={[estilo.botonPrimario, { marginTop: tamano.espacioGrande }]}
-      >
-        <View style={estilo.filaIcono}>
-          <View style={[estilo.iconoCirculo, { backgroundColor: color.primarioOscuro }]}>
-            <Text style={estilo.iconoGlifo}>✓</Text>
-          </View>
-          <Text style={estilo.botonPrimarioTexto}>Volver al listado</Text>
-        </View>
-      </Pressable>
-      <View style={{ height: tamano.espacioGrande * 2 }} />
-    </View>
-  );
 }
