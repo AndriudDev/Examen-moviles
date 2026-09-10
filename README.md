@@ -20,7 +20,7 @@ El proyecto tiene implementadas las **fases 1 a 8 del roadmap**: el formulario r
 - Persistencia (RF-05): metadatos en `AsyncStorage`, foto copiada de la caché a un archivo persistente con `expo-file-system`; el listado y el detalle leen el mismo repositorio al arrancar y el listado se recarga al recuperar el foco (`useFocusEffect`) — los datos y las fotos sobreviven al cierre de la app.
 - Estilo (Fase 7): sistema de diseño de `docs/style.md` — tokens (`tipografia`, sombra nativa `boxShadow`, +10 colores), **cabecera compartida** con tira de acento (`vista/Cabecera.tsx`, header nativo oculto), **FAB** único abajo-derecha, tarjeta de avistamiento rediseñada (avatar de iniciales, chips, clima), hero del estado vacío, `EstadoCarga`/`EstadoError` con sombra e iconografía, campos con foco verde + glow (`vista/CampoTexto.tsx`); verificado con `npx tsc --noEmit`, `expo-doctor` (21/21) y revisión visual en `npm run web`.
 - Modelo de dominio: entidad `Avistamiento`/`Clima`, validación del formulario (RF-01) y traducción del `weather_code` WMO a texto + ícono (`modelo/clima.ts`).
-- Ingeniería (fase 8): suite de **53 tests con jest + `jest-expo`** sobre la lógica pura — `validacion.ts` (RF-01), `clima.ts` (WMO), `construirClima` de `ClimaApi.ts` (sin red) y `vista/formato.ts` — con el mock oficial de AsyncStorage (`jest.setup.ts`); `npx tsc --noEmit` limpio y `expo-doctor` 21/21.
+- Ingeniería (fase 8): suite de **118 tests con jest + `jest-expo` y cobertura ≥ 70%** (`npm run test:coverage`) sobre toda la capa de lógica — validación (RF-01), WMO, `construirClima` y `consultarClima` de `ClimaApi.ts` (caché/timeout/reintento, sin red), repositorio (`expo-file-system` mockeado), los 3 controladores, adaptadores de cámara y ubicación, y tokens de `vista/tema.ts` — con el mock oficial de AsyncStorage (`jest.setup.ts`) y umbral `coverageThreshold` 70/70/70/70; `npx tsc --noEmit` limpio y `expo-doctor` 21/21.
 - Registro completo (RF-01): foto tomada en el momento con `expo-camera`, GPS automático con botón «Actualizar ubicación» (`expo-location`, timeout 10 s), fecha editable, cantidad mínima 1 y notas; valida por campo y confirma al guardar.
 - Clima del momento (RF-02): al capturar la ubicación se consulta **Open-Meteo** (`modelo/ClimaApi.ts`) con timeout real (AbortController 8 s) + 1 reintento y **caché por ubicación con TTL 15 min**; si la API falla o no hay red, el avistamiento se guarda igual, **sin clima**, y la pantalla avisa con opción a reintentar.
 
@@ -127,5 +127,6 @@ El detalle funcional completo está en [docs/brief.md](docs/brief.md).
 | `npm run web` | Abre la app en el navegador (solo desarrollo) |
 | `npx expo-doctor` | Verifica que el entorno esté sano (versiones de Node, dependencias) |
 | `npm test` | Corre la suite de tests (jest) una vez |
+| `npm run test:coverage` | Corre los tests con cobertura (umbral global 70% en `package.json`) |
 | `npm run test:watch` | Corre los tests en modo vigilia (re-ejecuta al cambiar archivos) |
 | `npm start -- --tunnel` | Expone el dev server por túnel (útil cuando el teléfono no está en el mismo Wi-Fi) |

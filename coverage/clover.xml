@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1789066120263" clover="3.2.0">
+  <project timestamp="1789066120263" name="All files">
+    <metrics statements="162" coveredstatements="162" conditionals="79" coveredconditionals="78" methods="39" coveredmethods="38" elements="280" coveredelements="278" complexity="0" loc="162" ncloc="162" packages="3" files="12" classes="12"/>
+    <package name="controlador">
+      <metrics statements="55" coveredstatements="55" conditionals="28" coveredconditionals="27" methods="17" coveredmethods="17"/>
+      <file name="ControladorDetalle.ts" path="D:\_INSTITUTO SAN SEBASTIAN\6to Trimestre\Aplicaciones Moviles\ex\controlador\ControladorDetalle.ts">
+        <metrics statements="4" coveredstatements="4" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="23" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="24" count="1" type="stmt"/>
+        <line num="26" count="2" type="stmt"/>
+      </file>
+      <file name="ControladorListado.ts" path="D:\_INSTITUTO SAN SEBASTIAN\6to Trimestre\Aplicaciones Moviles\ex\controlador\ControladorListado.ts">
+        <metrics statements="9" coveredstatements="9" conditionals="4" coveredconditionals="4" methods="5" coveredmethods="5"/>
+        <line num="11" count="3" type="stmt"/>
+        <line num="12" count="5" type="stmt"/>
+        <line num="13" count="3" type="stmt"/>
+        <line num="21" count="7" type="stmt"/>
+        <line num="22" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="23" count="2" type="stmt"/>
+        <line num="25" count="10" type="stmt"/>
+        <line num="30" count="10" type="stmt"/>
+        <line num="31" count="10" type="cond" truecount="2" falsecount="0"/>
+      </file>
+      <file name="ControladorRegistro.ts" path="D:\_INSTITUTO SAN SEBASTIAN\6to Trimestre\Aplicaciones Moviles\ex\controlador\ControladorRegistro.ts">
+        <metrics statements="8" coveredstatements="8" conditionals="6" coveredconditionals="6" methods="1" coveredmethods="1"/>
+        <line num="23" count="5" type="stmt"/>
+        <line num="24" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="29" count="4" type="stmt"/>
+        <line num="43" count="4" type="stmt"/>
+        <line num="44" count="4" type="stmt"/>
+        <line num="45" count="3" type="stmt"/>
+        <line num="47" count="1" type="stmt"/>
+      </file>
+      <file name="camara.ts" path="D:\_INSTITUTO SAN SEBASTIAN\6to Trimestre\Aplicaciones Moviles\ex\controlador\camara.ts">
+        <metrics statements="8" coveredstatements="8" conditionals="4" coveredconditionals="4" methods="2" coveredmethods="2"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="20" count="3" type="stmt"/>
+        <line num="21" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="24" count="2" type="stmt"/>
+        <line num="25" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="26" count="1" type="stmt"/>
+        <line num="35" count="1" type="stmt"/>
+      </file>
+      <file name="ubicacion.ts" path="D:\_INSTITUTO SAN SEBASTIAN\6to Trimestre\Aplicaciones Moviles\ex\controlador\ubicacion.ts">
+        <metrics statements="26" coveredstatements="26" conditionals="12" coveredconditionals="11" methods="7" coveredmethods="7"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="24" count="4" type="stmt"/>
+        <line num="25" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="26" count="2" type="stmt"/>
+        <line num="27" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="35" count="3" type="stmt"/>
+        <line num="39" count="2" type="stmt"/>
+        <line num="48" count="10" type="stmt"/>
+        <line num="51" count="10" type="stmt"/>
+        <line num="66" count="6" type="stmt"/>
+        <line num="67" count="6" type="stmt"/>
+        <line num="68" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="69" count="1" type="stmt"/>
+        <line num="71" count="5" type="stmt"/>
+        <line num="75" count="3" type="stmt"/>
+        <line num="77" count="2" type="stmt"/>
+        <line num="87" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="88" count="1" type="stmt"/>
+        <line num="90" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="91" count="1" type="stmt"/>
+        <line num="93" count="1" type="stmt"/>
+        <line num="94" count="1" type="stmt"/>
+        <line num="101" count="6" type="stmt"/>
+        <line num="102" count="1" type="cond" truecount="1" falsecount="1"/>
+      </file>
+    </package>
+    <package name="modelo">
+      <metrics statements="87" coveredstatements="87" conditionals="43" coveredconditionals="43" methods="17" coveredmethods="16"/>
+      <file name="Avistamiento.ts" path="D:\_INSTITUTO SAN SEBASTIAN\6to Trimestre\Aplicaciones Moviles\ex\modelo\Avistamiento.ts">
+        <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
+        <line num="56" count="5" type="stmt"/>
+        <line num="60" count="204" type="stmt"/>
+      </file>
+      <file name="ClimaApi.ts" path="D:\_INSTITUTO SAN SEBASTIAN\6to Trimestre\Aplicaciones Moviles\ex\modelo\ClimaApi.ts">
+        <metrics statements="41" coveredstatements="41" conditionals="16" coveredconditionals="16" methods="6" coveredmethods="5"/>
+        <line num="19" count="2" type="stmt"/>
+        <line num="20" count="2" type="stmt"/>
+        <line num="21" count="2" type="stmt"/>
+        <line num="22" count="2" type="stmt"/>
+        <line num="23" count="2" type="stmt"/>
+        <line num="35" count="8" type="stmt"/>
+        <line num="40" count="8" type="stmt"/>
+        <line num="41" count="8" type="stmt"/>
+        <line num="42" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="43" count="5" type="stmt"/>
+        <line num="45" count="2" type="stmt"/>
+        <line num="46" count="2" type="stmt"/>
+        <line num="47" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="49" count="1" type="stmt"/>
+        <line num="59" count="14" type="stmt"/>
+        <line num="60" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="66" count="9" type="stmt"/>
+        <line num="68" count="5" type="stmt"/>
+        <line num="69" count="5" type="stmt"/>
+        <line num="85" count="10" type="stmt"/>
+        <line num="86" count="10" type="stmt"/>
+        <line num="88" count="10" type="stmt"/>
+        <line num="90" count="10" type="stmt"/>
+        <line num="91" count="10" type="stmt"/>
+        <line num="92" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="93" count="2" type="stmt"/>
+        <line num="95" count="6" type="stmt"/>
+        <line num="96" count="6" type="stmt"/>
+        <line num="98" count="2" type="stmt"/>
+        <line num="100" count="10" type="stmt"/>
+        <line num="110" count="8" type="stmt"/>
+        <line num="112" count="8" type="stmt"/>
+        <line num="113" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="114" count="1" type="stmt"/>
+        <line num="117" count="7" type="stmt"/>
+        <line num="118" count="10" type="stmt"/>
+        <line num="119" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="120" count="4" type="stmt"/>
+        <line num="121" count="4" type="stmt"/>
+        <line num="125" count="4" type="stmt"/>
+        <line num="128" count="3" type="stmt"/>
+      </file>
+      <file name="RepositoryAvistamientos.ts" path="D:\_INSTITUTO SAN SEBASTIAN\6to Trimestre\Aplicaciones Moviles\ex\modelo\RepositoryAvistamientos.ts">
+        <metrics statements="25" coveredstatements="25" conditionals="10" coveredconditionals="10" methods="6" coveredmethods="6"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="17" count="1" type="stmt"/>
+        <line num="20" count="11" type="stmt"/>
+        <line num="21" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="22" count="5" type="stmt"/>
+        <line num="24" count="6" type="stmt"/>
+        <line num="25" count="6" type="stmt"/>
+        <line num="26" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="35" count="5" type="cond" truecount="4" falsecount="0"/>
+        <line num="36" count="2" type="stmt"/>
+        <line num="39" count="3" type="stmt"/>
+        <line num="40" count="3" type="stmt"/>
+        <line num="42" count="3" type="stmt"/>
+        <line num="43" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="44" count="3" type="stmt"/>
+        <line num="46" count="3" type="stmt"/>
+        <line num="47" count="3" type="stmt"/>
+        <line num="55" count="5" type="stmt"/>
+        <line num="57" count="5" type="stmt"/>
+        <line num="58" count="5" type="stmt"/>
+        <line num="59" count="5" type="stmt"/>
+        <line num="68" count="4" type="stmt"/>
+        <line num="73" count="2" type="stmt"/>
+        <line num="74" count="3" type="stmt"/>
+      </file>
+      <file name="clima.ts" path="D:\_INSTITUTO SAN SEBASTIAN\6to Trimestre\Aplicaciones Moviles\ex\modelo\clima.ts">
+        <metrics statements="4" coveredstatements="4" conditionals="4" coveredconditionals="4" methods="2" coveredmethods="2"/>
+        <line num="21" count="3" type="stmt"/>
+        <line num="34" count="3" type="stmt"/>
+        <line num="38" count="226" type="cond" truecount="2" falsecount="0"/>
+        <line num="39" count="32" type="cond" truecount="2" falsecount="0"/>
+      </file>
+      <file name="validacion.ts" path="D:\_INSTITUTO SAN SEBASTIAN\6to Trimestre\Aplicaciones Moviles\ex\modelo\validacion.ts">
+        <metrics statements="15" coveredstatements="15" conditionals="13" coveredconditionals="13" methods="1" coveredmethods="1"/>
+        <line num="11" count="19" type="stmt"/>
+        <line num="13" count="19" type="cond" truecount="2" falsecount="0"/>
+        <line num="14" count="3" type="stmt"/>
+        <line num="17" count="19" type="cond" truecount="2" falsecount="0"/>
+        <line num="18" count="3" type="stmt"/>
+        <line num="21" count="19" type="stmt"/>
+        <line num="22" count="19" type="cond" truecount="2" falsecount="0"/>
+        <line num="23" count="2" type="stmt"/>
+        <line num="24" count="17" type="cond" truecount="2" falsecount="0"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="28" count="19" type="stmt"/>
+        <line num="29" count="19" type="stmt"/>
+        <line num="30" count="19" type="cond" truecount="5" falsecount="0"/>
+        <line num="31" count="4" type="stmt"/>
+        <line num="34" count="19" type="stmt"/>
+      </file>
+    </package>
+    <package name="vista">
+      <metrics statements="20" coveredstatements="20" conditionals="8" coveredconditionals="8" methods="5" coveredmethods="5"/>
+      <file name="formato.ts" path="D:\_INSTITUTO SAN SEBASTIAN\6to Trimestre\Aplicaciones Moviles\ex\vista\formato.ts">
+        <metrics statements="14" coveredstatements="14" conditionals="8" coveredconditionals="8" methods="5" coveredmethods="5"/>
+        <line num="9" count="16" type="stmt"/>
+        <line num="10" count="16" type="cond" truecount="2" falsecount="0"/>
+        <line num="13" count="12" type="stmt"/>
+        <line num="17" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="18" count="3" type="stmt"/>
+        <line num="20" count="3" type="stmt"/>
+        <line num="21" count="3" type="stmt"/>
+        <line num="26" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="27" count="3" type="stmt"/>
+        <line num="29" count="3" type="stmt"/>
+        <line num="30" count="3" type="stmt"/>
+        <line num="35" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="36" count="3" type="stmt"/>
+        <line num="38" count="1" type="stmt"/>
+      </file>
+      <file name="tema.ts" path="D:\_INSTITUTO SAN SEBASTIAN\6to Trimestre\Aplicaciones Moviles\ex\vista\tema.ts">
+        <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="50" count="1" type="stmt"/>
+        <line num="65" count="1" type="stmt"/>
+        <line num="86" count="1" type="stmt"/>
+        <line num="107" count="1" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>
