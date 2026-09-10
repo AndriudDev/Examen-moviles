@@ -10,20 +10,20 @@ Bitácora de avistamiento de aves en terreno. Proyecto de la asignatura **Desarr
 
 ## Estado actual
 
-El proyecto tiene implementada la **fase 1 del roadmap (RF-01 Registro)**: el formulario real, con foto del momento y GPS, guarda en el dispositivo. Las fases de clima, listado y detalle siguen en construcción.
+El proyecto tiene implementadas las **fases 1 y 2 del roadmap**: el formulario real con foto del momento y GPS, el clima del momento con Open-Meteo (con caché, timeout y reintento), y el guardado en el dispositivo. Las fases de listado y detalle siguen en construcción.
 
 **Funciona hoy:**
 
 - Navegación con Expo Router (stack nativo): listado, registro y detalle con id dinámico.
 - Pantalla de listado con estado vacío diseñado y acceso directo al registro.
 - Tema de UI para uso en terreno: **oscuro estilo Bootstrap dark** (fondo `#212529`, tarjetas con borde fino, botones redondeados, verde de marca como acción), alto contraste, objetivos táctiles grandes.
-- Modelo de dominio: entidad `Avistamiento`/`Clima` y validación del formulario (RF-01).
+- Modelo de dominio: entidad `Avistamiento`/`Clima`, validación del formulario (RF-01) y traducción del `weather_code` WMO a texto + ícono (`modelo/clima.ts`).
 - Registro completo (RF-01): foto tomada en el momento con `expo-camera`, GPS automático con botón «Actualizar ubicación» (`expo-location`, timeout 10 s), fecha editable, cantidad mínima 1 y notas; valida por campo y confirma al guardar.
+- Clima del momento (RF-02): al capturar la ubicación se consulta **Open-Meteo** (`modelo/ClimaApi.ts`) con timeout real (AbortController 8 s) + 1 reintento y **caché por ubicación con TTL 15 min**; si la API falla o no hay red, el avistamiento se guarda igual, **sin clima**, y la pantalla avisa con opción a reintentar.
 - Persistencia del guardado (RF-05, save path): metadatos en `AsyncStorage`, foto copiada de la caché a un archivo persistente con `expo-file-system`.
 
 **En construcción (próximas fases):**
 
-- Clima del momento con Open-Meteo (caché por ubicación, timeout, reintento) (RF-02).
 - Lectura del repositorio y listado con datos reales: miniatura, fecha, temperatura, filtro (RF-03).
 - Detalle completo: foto grande, clima y ubicación legibles con reverse geocoding (RF-04).
 
@@ -54,6 +54,8 @@ app/          VISTA: rutas de Expo Router (navegación)
 modelo/       MODELO: datos, reglas de negocio y persistencia
   Avistamiento.ts   Entidad y tipos
   validacion.ts     Reglas del formulario (RF-01)
+  clima.ts          Códigos WMO → texto + ícono (RF-02)
+  ClimaApi.ts       Open-Meteo: fetch con timeout, reintento y caché (RF-02)
   RepositoryAvistamientos.ts  Persistencia: AsyncStorage + fotos (RF-05)
 controlador/  CONTROLADOR: orquesta vista ↔ modelo y periféricos
   ControladorRegistro.ts  Validación + guardado (RF-01)

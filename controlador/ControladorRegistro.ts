@@ -36,6 +36,8 @@ export async function guardarRegistro(borrador: BorradorAvistamiento): Promise<R
     fotoUri: borrador.fotoUri!,
     creadoEn: nuevaFechaLocal(),
     ...(borrador.notas?.trim() ? { notas: borrador.notas.trim() } : {}),
+    // RF-02: el clima es opcional; si la API falló, el avistamiento se guarda igual sin él.
+    ...(borrador.clima ? { clima: borrador.clima } : {}),
   };
 
   try {

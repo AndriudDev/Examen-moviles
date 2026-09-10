@@ -5,3 +5,12 @@ Starting Metro Bundler
 Waiting on http://localhost:8081
 
 Logs for your project will appear below.
+| (node:23936) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+Web Bundled 865ms node_modules\expo-router\entry.js (917 modules)
+Web  INFO  %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+Web  LOG  Running application "main" with appParams:
+ {"hydrate": undefined, "rootTag": "#root"} 
+Development-level warnings: ON.
+Performance optimizations: OFF.
+Android Bundled 1009ms node_modules\expo-router\entry.js (1375 modules)

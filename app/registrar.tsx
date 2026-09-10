@@ -6,8 +6,9 @@ import { Image, Pressable, ScrollView, Text, TextInput, View } from 'react-nativ
 import { garantizarAccesoCamara, tomarFoto } from '../controlador/camara';
 import { guardarRegistro } from '../controlador/ControladorRegistro';
 import { capturarCoordenadas, type Coordenadas } from '../controlador/ubicacion';
-import type { BorradorAvistamiento } from '../modelo/Avistamiento';
+import type { BorradorAvistamiento, Clima } from '../modelo/Avistamiento';
 import { nuevaFechaLocal } from '../modelo/Avistamiento';
+import { consultarClima } from '../modelo/ClimaApi';
 import type { ErroresValidacion } from '../modelo/validacion';
 import { EstadoCarga } from '../vista/EstadoCarga';
 import { EstadoError } from '../vista/EstadoError';
@@ -21,6 +22,8 @@ import { color, estilo, tamano } from '../vista/tema';
  */
 type EstadoFoto = 'inactivo' | 'pidiendo' | 'listo' | 'capturando' | 'error';
 type EstadoUbicacion = 'obteniendo' | 'ok' | 'error';
+/** Clima: 'inactivo' = aún sin ubicación; 'sinDato' = la API falló y se guarda sin clima (RF-02). */
+type EstadoClima = 'inactivo' | 'obteniendo' | 'ok' | 'sinDato';
 
 const ALTO_VISTA_CAMARA = 260;
 
@@ -52,6 +55,9 @@ export default function PantallaRegistro() {
   const [estadoUbicacion, setEstadoUbicacion] = useState<EstadoUbicacion>('obteniendo');
   const [errorUbicacion, setErrorUbicacion] = useState<string | undefined>(undefined);
 
+  const [clima, setClima] = useState<Clima | undefined>(undefined);
+  const [estadoClima, setEstadoClima] = useState<EstadoClima>('inactivo');
+
   const [erroresFormulario, setErroresFormulario] = useState<ErroresValidacion>({});
   const [guardando, setGuardando] = useState(false);
   const [guardadoOk, setGuardadoOk] = useState(false);
@@ -65,12 +71,23 @@ export default function PantallaRegistro() {
     setEstadoUbicacion('obteniendo');
     setErrorUbicacion(undefined);
     try {
-      setCoordenadas(await capturarCoordenadas());
+      const coordenadasNuevas = await capturarCoordenadas();
+      setCoordenadas(coordenadasNuevas);
       setEstadoUbicacion('ok');
+      void consultarClimaAlMomento(coordenadasNuevas);
     } catch (error) {
       setErrorUbicacion(textoDeError(error));
       setEstadoUbicacion('error');
     }
+  }
+
+  /** RF-02: con la ubicación capturada se consulta el clima; si la API falla, se sigue sin él. */
+  async function consultarClimaAlMomento(coordenadasNuevas: Coordenadas): Promise<void> {
+    setEstadoClima('obteniendo');
+    setClima(undefined);
+    const resultado = await consultarClima(coordenadasNuevas);
+    setClima(resultado ?? undefined);
+    setEstadoClima(resultado ? 'ok' : 'sinDato');
   }
 
   async function abrirCamara(): Promise<void> {
@@ -114,6 +131,9 @@ export default function PantallaRegistro() {
       notas,
       fotoUri,
       coordenadas,
+      // Si aún se está consultando o la API falló, clima llega undefined y el
+      // registro se guarda igual, sin clima (RF-02).
+      clima,
     };
     const resultado = await guardarRegistro(borrador);
     if (resultado.ok) {
@@ -252,6 +272,51 @@ export default function PantallaRegistro() {
                 >
                   <Text style={estilo.botonSecundarioTexto}>Actualizar ubicación</Text>
                 </Pressable>
+              </View>
+            )}
+          </View>
+
+          {/* CLIMA (RF-02: dato histórico del momento de la ubicación; si la API
+              falla, el avistamiento se guarda igual sin clima) */}
+          <View style={{ marginTop: tamano.espacioGrande }}>
+            <Text style={estilo.etiqueta}>Clima del momento (opcional)</Text>
+            {estadoClima === 'inactivo' ? (
+              <Text style={{ fontSize: 14, color: color.textoSuave }}>
+                Se consultará al capturar la ubicación.
+              </Text>
+            ) : estadoClima === 'obteniendo' ? (
+              <EstadoCarga mensaje="Consultando clima…" />
+            ) : estadoClima === 'ok' && clima ? (
+              <View style={estilo.tarjeta}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: tamano.espacioCompacto }}>
+                  <Text style={{ fontSize: 28 }}>{clima.icono}</Text>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 16, fontWeight: '700', color: color.texto }}>
+                      {clima.condicion}
+                    </Text>
+                    <Text style={{ fontSize: 14, color: color.textoSuave }}>
+                      {clima.temperaturaC.toFixed(1)} °C · humedad {clima.humedadPct}%
+                    </Text>
+                  </View>
+                </View>
+                <Text style={{ fontSize: 12, color: color.textoSuave, marginTop: tamano.espacioCompacto }}>
+                  Se guardará con este avistamiento.
+                </Text>
+              </View>
+            ) : (
+              <View>
+                <Text style={{ fontSize: 14, color: color.textoSuave }}>
+                  Clima no disponible ahora: el avistamiento se guardará igual, sin este dato.
+                </Text>
+                {coordenadas ? (
+                  <Pressable
+                    accessibilityLabel="Reintentar la consulta del clima"
+                    onPress={() => void consultarClimaAlMomento(coordenadas)}
+                    style={[estilo.botonSecundario, { marginTop: tamano.espacioCompacto }]}
+                  >
+                    <Text style={estilo.botonSecundarioTexto}>Reintentar clima</Text>
+                  </Pressable>
+                ) : null}
               </View>
             )}
           </View>

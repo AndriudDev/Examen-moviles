@@ -48,6 +48,8 @@ export type BorradorAvistamiento = {
   notas?: string;
   fotoUri?: string;
   coordenadas?: { lat: number; lng: number };
+  /** clima del momento si la API respondió; ausente si falló (RF-02) */
+  clima?: Clima;
 };
 
 export function nuevaFechaLocal(): string {

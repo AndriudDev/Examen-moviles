@@ -38,8 +38,9 @@ export async function capturarCoordenadas(): Promise<Coordenadas> {
 }
 
 /**
- * Rechaza la promesa si tarda más de `milisegundos`: toda operación asíncrona
- * (GPS hoy, clima en la fase RF-02) debe tener límite de espera.
+ * Rechaza la promesa si tarda más de `milisegundos`: límite de espera para
+ * operaciones sin API de cancelación (GPS). El clima usa AbortController en
+ * `modelo/ClimaApi.ts`, que sí aborta la petición HTTP en curso.
  */
 export async function conTiempoMaximo<T>(promesa: Promise<T>, milisegundos: number): Promise<T> {
   return Promise.race([

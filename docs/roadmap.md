@@ -12,6 +12,7 @@ Bitácora de avistamiento de aves (React Native + Expo SDK 57). Estado de avance
 | Modelo | Tipos `Avistamiento`/`Clima`, `nuevaId()`, `nuevaFechaLocal()` en `modelo/Avistamiento.ts` |
 | Validación | RF-01 completa en `modelo/validacion.ts` (foto, ubicación, nombre, cantidad) |
 | Registro (RF-01) | Formulario real en `app/registrar.tsx` con foto del momento (`expo-camera`), GPS automático + botón «Actualizar ubicación» (`expo-location`), validación por campo y confirmación al guardar |
+| Clima (RF-02) | `modelo/ClimaApi.ts` consulta Open-Meteo tras capturar la ubicación: timeout real (AbortController 8 s) + 1 reintento + caché por ubicación con TTL 15 min; si falla, la app guarda igual sin clima. `modelo/clima.ts` traduce el `weather_code` WMO a texto + ícono |
 | Persistencia (guardado) | `modelo/RepositoryAvistamientos.ts`: metadatos en AsyncStorage + foto copiada a archivo persistente (`expo-file-system`); la lectura llega con la fase RF-03 |
 | Controlador | `controlador/ControladorRegistro.ts` valida y guarda; `controlador/camara.ts` y `controlador/ubicacion.ts` aíslan `expo-camera`/`expo-location` (patrón Adapter) |
 | Estados | `EstadoVacio`/`EstadoCarga`/`EstadoError` en `vista/` (consumidos en carga de GPS, cámara y guardado) |
@@ -31,11 +32,12 @@ Bitácora de avistamiento de aves (React Native + Expo SDK 57). Estado de avance
 
 > Pendiente heredado para la fase RF-03: la **lectura** del repositorio (listar/cargar por id), que hoy no tiene consumidor.
 
-### 2. RF-02 Clima Open-Meteo — no existe nada
+### 2. RF-02 Clima Open-Meteo ✅ (fase 2 completada)
 
-- [ ] Servicio HTTP a Open-Meteo (lat/lng → `Clima`), con timeout y reintento
-- [ ] Caché por ubicación (el README lo promete; sin código)
-- [ ] Flujo "guardar sin clima si falla"
+- [x] Servicio HTTP a Open-Meteo (`modelo/ClimaApi.ts`, lat/lng → `Clima`) con timeout real (AbortController 8 s) y 1 reintento
+- [x] Caché por ubicación con TTL 15 min (clave: coordenadas redondeadas a ~2 decimales ≈ 1 km) en `AsyncStorage`
+- [x] Flujo "guardar sin clima si falla": `consultarClima` en `modelo/ClimaApi.ts` nunca lanza; la vista consulta tras el GPS y guarda igual sin `clima` (RF-02)
+- [x] Traducción WMO → texto + ícono en `modelo/clima.ts` (patrón Factory, stack.md §9)
 
 ### 3. RF-03 Listado — `app/index.tsx` (siempre muestra el estado vacío)
 
@@ -97,3 +99,4 @@ Bitácora de avistamiento de aves (React Native + Expo SDK 57). Estado de avance
 - App movida a la raíz del repo (`refactor: mover app a la raíz del repo`).
 - Guía de estilo `docs/style.md` creada.
 - Fase 1 (RF-01 Registro): formulario real en `app/registrar.tsx`, adaptadores de cámara y GPS (`controlador/camara.ts`, `controlador/ubicacion.ts`), `controlador/ControladorRegistro.ts` y guardado con foto persistente (`modelo/RepositoryAvistamientos.ts`, RF-05 save path).
+- Fase 2 (RF-02 Clima Open-Meteo): `modelo/ClimaApi.ts` (fetch con timeout + reintento + caché por ubicación con TTL), `modelo/clima.ts` (WMO → texto/ícono) e integración en el registro: tras capturar el GPS se consulta el clima y, si la API falla, se guarda igual sin clima.
