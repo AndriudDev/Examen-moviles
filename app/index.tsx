@@ -1,20 +1,23 @@
-import { Stack, useFocusEffect, useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { cargarAvistamientos, filtrarPorNombre } from '../controlador/ControladorListado';
 import type { Avistamiento } from '../modelo/Avistamiento';
+import { Cabecera } from '../vista/Cabecera';
+import { CampoTexto } from '../vista/CampoTexto';
 import { EstadoCarga } from '../vista/EstadoCarga';
 import { EstadoError } from '../vista/EstadoError';
 import { EstadoVacio } from '../vista/EstadoVacio';
 import { TarjetaAvistamiento } from '../vista/TarjetaAvistamiento';
-import { color, estilo, tamano } from '../vista/tema';
+import { color, estilo, tamano, tipografia } from '../vista/tema';
 
 /**
  * Pantalla principal: listado de avistamientos (RF-03).
- * Carga real desde el repositorio (orden fecha desc), filtro por nombre,
- * estado vacío diseñado cuando no hay registros y acceso directo al registro.
- * Cada operación asíncrona muestra su estado (carga/error con reintento).
+ * Cabecera compartida + FAB (style.md §4.1/§4.7), carga real desde el
+ * repositorio (orden fecha desc), filtro por nombre con foco estilizado,
+ * estado vacío con avatar y error con reintento. El FAB flota sobre el
+ * contenido: el scroll deja 96px libres debajo (style.md §4.7).
  */
 export default function PantallaListado() {
   const router = useRouter();
@@ -49,67 +52,49 @@ export default function PantallaListado() {
   const visibles = filtrarPorNombre(avistamientos, filtro);
 
   return (
-    <View style={[estilo.pantalla, { flex: 1 }]}>
-      <Stack.Title>AvistAves</Stack.Title>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <View>
-          <Text style={estilo.tituloPantalla}>AvistAves</Text>
-          <Text style={estilo.subtitulo}>Bitácora de avistamiento de aves</Text>
-        </View>
-        <Pressable
-          accessibilityLabel="Nuevo avistamiento"
-          onPress={() => router.push('/registrar')}
-          style={{
-            width: tamano.toque,
-            height: tamano.toque,
-            borderRadius: tamano.radio,
-            backgroundColor: color.primario,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Text style={{ color: color.primarioTexto, fontSize: 26, lineHeight: tamano.toque }}>+</Text>
-        </Pressable>
+    <View style={{ flex: 1, backgroundColor: color.fondo }}>
+      <Cabecera titulo="AvistAves" subtitulo="Bitácora de avistamiento de aves" />
+
+      <View style={{ flex: 1, padding: tamano.espacioGrande }}>
+        {cargando ? (
+          <EstadoCarga mensaje="Cargando avistamientos…" />
+        ) : errorCarga ? (
+          <EstadoError mensaje={errorCarga} alReintentar={() => void recargar()} />
+        ) : avistamientos.length === 0 ? (
+          <EstadoVacio />
+        ) : (
+          <ScrollView
+            style={{ flex: 1 }}
+            contentContainerStyle={{ gap: tamano.espacio, paddingBottom: tamano.espacioGrande * 4 }}
+          >
+            <CampoTexto
+              accessibilityLabel="Filtrar avistamientos por nombre"
+              value={filtro}
+              onChangeText={setFiltro}
+              placeholder="Filtrar por nombre del ave…"
+            />
+            {visibles.length === 0 ? (
+              <View style={estilo.tarjeta}>
+                <Text style={tipografia.cuerpo} numberOfLines={2}>
+                  No hay avistamientos que coincidan con «{filtro.trim()}».
+                </Text>
+              </View>
+            ) : (
+              visibles.map((avistamiento) => (
+                <TarjetaAvistamiento key={avistamiento.id} avistamiento={avistamiento} />
+              ))
+            )}
+          </ScrollView>
+        )}
       </View>
 
-      {cargando ? (
-        <View style={{ marginTop: tamano.espacioGrande }}>
-          <EstadoCarga mensaje="Cargando avistamientos…" />
-        </View>
-      ) : errorCarga ? (
-        <View style={{ marginTop: tamano.espacioGrande }}>
-          <EstadoError mensaje={errorCarga} alReintentar={() => void recargar()} />
-        </View>
-      ) : avistamientos.length === 0 ? (
-        <View style={{ marginTop: tamano.espacioGrande }}>
-          <EstadoVacio />
-        </View>
-      ) : (
-        <ScrollView
-          style={{ flex: 1, marginTop: tamano.espacioGrande }}
-          contentContainerStyle={{ gap: tamano.espacio }}
-        >
-          <TextInput
-            accessibilityLabel="Filtrar avistamientos por nombre"
-            value={filtro}
-            onChangeText={setFiltro}
-            placeholder="Filtrar por nombre del ave…"
-            placeholderTextColor={color.textoSuave}
-            style={estilo.campo}
-          />
-          {visibles.length === 0 ? (
-            <View style={estilo.tarjeta}>
-              <Text style={{ fontSize: 15, color: color.texto }} numberOfLines={2}>
-                No hay avistamientos que coincidan con «{filtro.trim()}».
-              </Text>
-            </View>
-          ) : (
-            visibles.map((avistamiento) => (
-              <TarjetaAvistamiento key={avistamiento.id} avistamiento={avistamiento} />
-            ))
-          )}
-        </ScrollView>
-      )}
+      <Pressable
+        accessibilityLabel="Nuevo avistamiento"
+        onPress={() => router.push('/registrar')}
+        style={estilo.fab}
+      >
+        <Text style={estilo.fabIcono}>+</Text>
+      </Pressable>
     </View>
   );
 }

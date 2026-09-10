@@ -10,22 +10,22 @@ Bitácora de avistamiento de aves en terreno. Proyecto de la asignatura **Desarr
 
 ## Estado actual
 
-El proyecto tiene implementadas las **fases 1, 2, 3, 4, 5 y 6 del roadmap**: el formulario real con foto del momento y GPS, el clima del momento con Open-Meteo (con caché, timeout y reintento), el guardado en el dispositivo, el **listado con los datos reales** (RF-03), el **detalle completo** (RF-04), la **persistencia local** (RF-05) y la **navegación completa** (RF-06).
+El proyecto tiene implementadas las **fases 1 a 7 del roadmap**: el formulario real con foto del momento y GPS, el clima del momento con Open-Meteo (con caché, timeout y reintento), el guardado en el dispositivo, el **listado con los datos reales** (RF-03), el **detalle completo** (RF-04), la **persistencia local** (RF-05), la **navegación completa** (RF-06) y el **sistema de diseño de `docs/style.md`** (tokens, cabecera compartida, FAB, tarjetas nuevas, estados, formulario estilizado).
 
 **Funciona hoy:**
 
 - Navegación completa con Expo Router (RF-06): stack nativo con listado, registro y detalle con id dinámico; botón «Volver al listado» desde cada pantalla con fallback si no hay historial, y vuelta al origen tras guardar.
-- Pantalla principal de **listado real (RF-03)**: carga desde el repositorio ordenada por fecha (más reciente primero), tarjetas con miniatura, nombre, cantidad, fecha y temperatura (o indicador de «clima no disponible»), **filtro por nombre del ave** y estado vacío diseñado cuando no hay avistamientos; las tarjetas navegan al detalle.
+- Pantalla principal de **listado real (RF-03)**: carga desde el repositorio ordenada por fecha (más reciente primero), cabecera compartida + FAB «nuevo», tarjetas con miniatura, nombre + badge de cantidad, chips de fecha/hora/lugar y temperatura grande (o chip «Sin clima»), **filtro por nombre del ave** con foco estilizado y estado vacío con avatar (hero) cuando no hay avistamientos; las tarjetas navegan al detalle.
 - **Detalle completo (RF-04)**: foto grande persistente, todos los datos del avistamiento, clima legible (ícono + condición + temperatura + humedad, nunca el `weather_code` crudo) y **lugar legible** con reverse geocoding (`reverseGeocodeAsync` de `expo-location`); estados de carga, error con reintento y aviso «lugar/clima no disponibles» sin bloquear la vista.
 - Persistencia (RF-05): metadatos en `AsyncStorage`, foto copiada de la caché a un archivo persistente con `expo-file-system`; el listado y el detalle leen el mismo repositorio al arrancar y el listado se recarga al recuperar el foco (`useFocusEffect`) — los datos y las fotos sobreviven al cierre de la app.
-- Tema de UI para uso en terreno: **oscuro estilo Bootstrap dark** (fondo `#212529`, tarjetas con borde fino, botones redondeados, verde de marca como acción), alto contraste, objetivos táctiles grandes.
+- Estilo (Fase 7): sistema de diseño de `docs/style.md` — tokens (`tipografia`, sombra nativa `boxShadow`, +10 colores), **cabecera compartida** con tira de acento (`vista/Cabecera.tsx`, header nativo oculto), **FAB** único abajo-derecha, tarjeta de avistamiento rediseñada (avatar de iniciales, chips, clima), hero del estado vacío, `EstadoCarga`/`EstadoError` con sombra e iconografía, campos con foco verde + glow (`vista/CampoTexto.tsx`); verificado con `npx tsc --noEmit`, `expo-doctor` (21/21) y revisión visual en `npm run web`.
 - Modelo de dominio: entidad `Avistamiento`/`Clima`, validación del formulario (RF-01) y traducción del `weather_code` WMO a texto + ícono (`modelo/clima.ts`).
 - Registro completo (RF-01): foto tomada en el momento con `expo-camera`, GPS automático con botón «Actualizar ubicación» (`expo-location`, timeout 10 s), fecha editable, cantidad mínima 1 y notas; valida por campo y confirma al guardar.
 - Clima del momento (RF-02): al capturar la ubicación se consulta **Open-Meteo** (`modelo/ClimaApi.ts`) con timeout real (AbortController 8 s) + 1 reintento y **caché por ubicación con TTL 15 min**; si la API falla o no hay red, el avistamiento se guarda igual, **sin clima**, y la pantalla avisa con opción a reintentar.
 
 **En construcción (próximas fases):**
 
-- Estilo visual según `docs/style.md` (tokens, cabecera, FAB, tarjetas nuevas, estados) y verificación final en teléfono con Expo Go.
+- Ingeniería (fase 8 del roadmap): tests de `validacion.ts`, revisión `expo-doctor` ya pasada (21/21), y verificación final en teléfono con Expo Go (prueba de humo con cámara, GPS y clima en vivo).
 
 ---
 
@@ -64,9 +64,12 @@ controlador/  CONTROLADOR: orquesta vista ↔ modelo y periféricos
   camara.ts             Adaptador expo-camera (foto del momento)
   ubicacion.ts          Adaptador expo-location (GPS + reverse geocoding)
 vista/        VISTA: componentes visuales compartidos
-  tema.ts           Colores y estilos (contraste para terreno)
+  tema.ts           Tokens: colores, tipografia, sombra, estilos (contraste para terreno)
+  Cabecera.tsx      Cabecera compartida (tira de acento + zona segura)
+  CampoTexto.tsx    Campo de formulario con foco verde + glow
+  TarjetaAvistamiento.tsx  Tarjeta del listado (avatar, badges, chips, clima; RF-03)
+  Estado*.tsx       Estados de carga, error y vacío (con sombra e iconografía)
   formato.ts        Fechas legibles (compartido listado/detalle)
-  Estado*.tsx       Estados de carga, error y vacío
 docs/         brief.md (idea), stack.md (arquitectura), style.md (estilo visual) y roadmap.md (plan de trabajo)
 ```
 

@@ -1,36 +1,43 @@
 import { useRouter } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 
-import { estilo, tamano } from './tema';
+import { color, estilo, tamano, tipografia } from './tema';
 
 /**
- * Estado vacío del listado (RF-03): nada de pantalla en blanco,
- * guía al usuario a registrar su primer avistamiento.
- *
- * El CTA es un Pressable directo (onPress → router.push), sin envolverlo
- * en `Link asChild`: aislado del Slot de expo-router se comporta idéntico
- * a los demás botones de la app en Android.
+ * Estado vacío del listado (RF-03 + style.md §4.5): hero con avatar de
+ * iniciales (sin asset ilustrativo: avatar grande, nunca emoji), título y
+ * cuerpo centrados y CTA primario con icono +.
  */
 export function EstadoVacio() {
   const router = useRouter();
   return (
-    <View style={[estilo.pantalla, { alignItems: 'center', justifyContent: 'center' }]}>
-      <Text style={{ fontSize: 56, marginBottom: tamano.espacio }}>🐦</Text>
-      <Text style={[estilo.tituloPantalla, { textAlign: 'center' }]}>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={[estilo.avatarHero, { backgroundColor: color.primarioOscuro }]}>
+        <Text style={estilo.avatarHeroTexto}>AV</Text>
+      </View>
+      <Text style={[tipografia.seccion, { textAlign: 'center', marginTop: tamano.espacioGrande }]}>
         Todavía no hay avistamientos
       </Text>
-      <Text style={[estilo.subtitulo, { textAlign: 'center', marginTop: tamano.espacioCompacto }]}>
+      <Text
+        style={[
+          tipografia.cuerpo,
+          { color: color.textoSuave, textAlign: 'center', marginTop: tamano.espacioFino },
+        ]}
+      >
         Sal a observar y registra tu primera ave con foto, ubicación y clima.
       </Text>
-      <View style={{ marginTop: tamano.espacioGrande }}>
-        <Pressable
-          accessibilityLabel="Registrar avistamiento"
-          onPress={() => router.push('/registrar')}
-          style={estilo.botonPrimario}
-        >
+      <Pressable
+        accessibilityLabel="Registrar avistamiento"
+        onPress={() => router.push('/registrar')}
+        style={[estilo.botonPrimario, { marginTop: tamano.contenedor }]}
+      >
+        <View style={estilo.filaIcono}>
+          <View style={[estilo.iconoCirculo, { backgroundColor: color.primarioOscuro }]}>
+            <Text style={estilo.iconoGlifo}>+</Text>
+          </View>
           <Text style={estilo.botonPrimarioTexto}>Registrar avistamiento</Text>
-        </Pressable>
-      </View>
+        </View>
+      </Pressable>
     </View>
   );
 }

@@ -111,18 +111,18 @@ Ritmo: `8` dentro de chips, `16` dentro de tarjetas, `24` entre secciones, `32` 
 
 ### 3.4 Elevación (sombra nativa, RN ≥ 0.76)
 
-React Native 0.86 soporta `boxShadow`. Tokenizar una altura por pieza; jamás inventar sombras ad-hoc:
+React Native 0.86 soporta `boxShadow`. Tokenizar una altura por pieza; jamás inventar sombras ad-hoc. La API real de RN 0.86 usa `offsetX`/`offsetY`/`blurRadius`/`spreadDistance`; `TextStyle` (campos) solo acepta el glow como string CSS:
 
 ```ts
 export const sombra = {
   nivel1: { // botones, chips interactivos
-    boxShadow: { color: 'rgba(31,31,31,0.06)', offsetWidth: 0, offsetHeight: 2, blurRadius: 8, spreadRadius: 0 } as const,
+    boxShadow: [{ offsetX: 0, offsetY: 2, blurRadius: 8, spreadDistance: 0, color: 'rgba(0,0,0,0.35)' }] as const,
   },
   nivel2: { // tarjetas de contenido
-    boxShadow: { color: 'rgba(31,31,31,0.12)', offsetWidth: 0, offsetHeight: 4, blurRadius: 12, spreadRadius: 1 } as const,
+    boxShadow: [{ offsetX: 0, offsetY: 4, blurRadius: 12, spreadDistance: 1, color: 'rgba(0,0,0,0.42)' }] as const,
   },
   nivel3: { // FAB, modales, menús flotantes
-    boxShadow: { color: 'rgba(0,0,0,0.14)', offsetWidth: 0, offsetHeight: 6, blurRadius: 16, spreadRadius: 0 } as const,
+    boxShadow: [{ offsetX: 0, offsetY: 6, blurRadius: 16, spreadDistance: 0, color: 'rgba(0,0,0,0.50)' }] as const,
   },
 } as const;
 ```
@@ -194,7 +194,7 @@ campoEnFoco: {
 },
 ```
 
-Etiqueta `tipografia.detalle` (600) arriba, separada `espacioFino`. El foco usa **borde + sombra** (doble señal): borde `primario` y glow sutil — visible en campo abierto.
+Etiqueta `tipografia.detalle` (600) arriba, separada `espacioFino`. El foco usa **borde + sombra** (doble señal): borde **`verdeClaro`** (no `primario`: 2.6:1 sobre `superficie`, fallaría AA) y glow sutil — visible en campo abierto.
 
 ### 4.5 Estados
 

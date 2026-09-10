@@ -65,15 +65,17 @@ Bitácora de avistamiento de aves (React Native + Expo SDK 57). Estado de avance
 - [x] Enlazar tarjetas del listado real → detalle (fase 3)
 - [x] Volver desde cada pantalla al origen correcto: botón «Volver al listado» en detalle y registro con fallback `canGoBack()` (vuelta nativa o `push('/')` si no hay historial); tras guardar, confirmación → listado; el listado recarga con `useFocusEffect` al recuperar el foco, así el registro nuevo aparece sin reiniciar la app
 
-### 7. Estilo — spec lista en docs/style.md, nada implementado
+### 7. Estilo — spec lista en docs/style.md ✅ (fase 7 completada)
 
-- [ ] Paso 1: tokens en `vista/tema.ts` (`tipografia`, `sombra`, +7 colores)
-- [ ] Paso 2: cabecera compartida + FAB (quitar `+` del header en `index.tsx`)
-- [ ] Paso 3: `TarjetaAvistamiento.tsx` nuevo (avatar iniciales, chips, clima)
-- [ ] Paso 4: hero del estado vacío (ilustración/avatar, no emoji)
-- [ ] Paso 5: `EstadoCarga`/`EstadoError` con sombra e iconografía
-- [ ] Paso 6: formulario estilizado (foco verde + glow)
-- [ ] Paso 7: verificación visual
+- [x] Paso 1: tokens en `vista/tema.ts` (`tipografia`, `sombra` nativa `boxShadow`, +10 colores, `radioPildora/hero`, `espacioFino`); `estilo.cabecera`, `fab`, `badge`, `chip`, `tarjetaAvistamiento`, `campoEnFoco` (foco verde claro + glow, AA sobre oscuro), `iconoCirculo`, `avatarHero`, `filaIcono`, `deshabilitado`
+- [x] Paso 2: cabecera compartida (`vista/Cabecera.tsx` con tira de acento + zona segura) y **FAB** de 64px abajo-derecha; el `+` del header se quitó de `index.tsx` (header nativo oculto en `_layout.tsx`, cada pantalla dibuja su cabecera)
+- [x] Paso 3: `TarjetaAvistamiento.tsx` nuevo — miniatura, fila de título con badge `×cantidad`, chips micro (fecha, hora, lugar) y clima a la derecha (temperatura 28px/700 + ícono, o chip «Sin clima»); estado presionado `scale(0.98)` + sombra nivel 1
+- [x] Paso 4: hero del estado vacío con **avatar de iniciales** `AV` de 120px (sin asset ilustrativo; nunca emoji), título sección + cuerpo centrados y CTA primario con icono `+`
+- [x] Paso 5: `EstadoCarga` (spinner grande + mensaje, tarjeta nivel 1) y `EstadoError` (ícono ⚠ en círculo tinte peligro, mensaje bold en peligro, botón «Reintentar»)
+- [x] Paso 6: formulario estilizado — `vista/CampoTexto.tsx` con foco verde + glow en todos los campos (listado y registro), etiquetas `detalle`, CTA «Guardar» con icono `✓` en círculo
+- [x] Paso 7: verificación visual en web (`npm run web`): cabecera/hero/FAB/tarjetas/chips/clima/foco/error comprobados en el navegador; `npx tsc --noEmit` limpio
+
+Notas de implementación: `boxShadow` usa la API real de RN 0.86 (`offsetX/offsetY/blurRadius/spreadDistance`, no `offsetWidth`); `TextStyle` (campo) recibe el glow como string CSS; contraste verificado: `verdeClaro` (6.8:1) en el foco en vez de `primario` (2.6:1 sobre `superficie`, fallaría AA) — style.md §4.4 actualizado.
 
 ### 8. Ingeniería
 
@@ -105,3 +107,4 @@ Bitácora de avistamiento de aves (React Native + Expo SDK 57). Estado de avance
 - Fase 4 (RF-04 Detalle): `controlador/ControladorDetalle.ts` + `leerAvistamientoPorId` en el repositorio; pantalla `app/detalle/[id].tsx` con foto grande, todos los datos, clima legible (ícono + condición + temperatura + humedad) y lugar legible vía reverse geocoding (`obtenerLugarLegible` en `controlador/ubicacion.ts`, timeout 8 s, degrada sin bloquear); estados de carga/error/inexistente con reintento y vuelta al listado; `vista/formato.ts` compartido con la tarjeta del listado.
 - Fase 5 (RF-05 Persistencia): repositorio `modelo/RepositoryAvistamientos.ts` completo — `guardarAvistamiento` (foto copiada de la caché de la cámara a documentos vía `expo-file-system`, metadatos en AsyncStorage), `leerAvistamientos` y `leerAvistamientoPorId`; el listado carga del repositorio al arrancar y recarga al recuperar el foco (`useFocusEffect` en `app/index.tsx`); datos y fotos sobreviven al cierre de la app.
 - Fase 6 (RF-06 Navegación): vuelta al origen correcto desde cada pantalla — botón «Volver al listado» en el detalle y en el registro con fallback `canGoBack()` (vuelta nativa o `push('/')` sin historial); tras guardar, confirmación que devuelve al listado ya refrescado.
+- Fase 7 (Estilo): sistema de diseño de `docs/style.md` implementado — tokens (`tipografia`, `sombra` `boxShadow` nativa, +10 colores), cabecera compartida con tira de acento (`vista/Cabecera.tsx`, header nativo del Stack oculto), FAB único, `TarjetaAvistamiento` nueva (avatar de iniciales pendiente de asset, badge ×cantidad, chips, clima grande), hero del estado vacío con avatar `AV`, `EstadoCarga`/`EstadoError` con sombra e iconografía (glifo en círculo), campos con foco verde + glow (`vista/CampoTexto.tsx`); verificado con `npx tsc --noEmit`, `expo-doctor` (21/21) y revisión visual en `npm run web`.

@@ -23,18 +23,16 @@ const temaOscuro = {
 
 /**
  * Layout raíz: navegación tipo pila nativa (RF-06).
- * El header de la pila (flecha atrás + título) se pinta del color del
- * fondo del tema: así la barra de navegación se funde con el cuerpo
- * en vez de mostrar un recuadro de color distinto.
+ * El header nativo se oculta: cada pantalla dibuja su propia cabecera
+ * compartida (`vista/Cabecera.tsx`, style.md §4.1) y mantiene la vuelta
+ * al origen con sus botones, además del gesto/hardware back del sistema.
  */
 export default function LayoutRaiz() {
   return (
     <ThemeProvider value={temaOscuro}>
       <Stack
         screenOptions={{
-          headerStyle: { backgroundColor: color.fondo },
-          headerTintColor: color.texto,
-          headerShadowVisible: false,
+          headerShown: false,
         }}
       />
     </ThemeProvider>
