@@ -10,7 +10,7 @@ Bitácora de avistamiento de aves en terreno. Proyecto de la asignatura **Desarr
 
 ## Estado actual
 
-El proyecto tiene implementadas las **fases 1 a 7 del roadmap**: el formulario real con foto del momento y GPS, el clima del momento con Open-Meteo (con caché, timeout y reintento), el guardado en el dispositivo, el **listado con los datos reales** (RF-03), el **detalle completo** (RF-04), la **persistencia local** (RF-05), la **navegación completa** (RF-06) y el **sistema de diseño de `docs/style.md`** (tokens, cabecera compartida, FAB, tarjetas nuevas, estados, formulario estilizado).
+El proyecto tiene implementadas las **fases 1 a 8 del roadmap**: el formulario real con foto del momento y GPS, el clima del momento con Open-Meteo (con caché, timeout y reintento), el guardado en el dispositivo, el **listado con los datos reales** (RF-03), el **detalle completo** (RF-04), la **persistencia local** (RF-05), la **navegación completa** (RF-06), el **sistema de diseño de `docs/style.md`** (tokens, cabecera compartida, FAB, tarjetas nuevas, estados, formulario estilizado) y la **ingeniería de calidad** (fase 8: tests de la lógica pura con jest + `jest-expo`, typecheck y `expo-doctor`).
 
 **Funciona hoy:**
 
@@ -20,12 +20,13 @@ El proyecto tiene implementadas las **fases 1 a 7 del roadmap**: el formulario r
 - Persistencia (RF-05): metadatos en `AsyncStorage`, foto copiada de la caché a un archivo persistente con `expo-file-system`; el listado y el detalle leen el mismo repositorio al arrancar y el listado se recarga al recuperar el foco (`useFocusEffect`) — los datos y las fotos sobreviven al cierre de la app.
 - Estilo (Fase 7): sistema de diseño de `docs/style.md` — tokens (`tipografia`, sombra nativa `boxShadow`, +10 colores), **cabecera compartida** con tira de acento (`vista/Cabecera.tsx`, header nativo oculto), **FAB** único abajo-derecha, tarjeta de avistamiento rediseñada (avatar de iniciales, chips, clima), hero del estado vacío, `EstadoCarga`/`EstadoError` con sombra e iconografía, campos con foco verde + glow (`vista/CampoTexto.tsx`); verificado con `npx tsc --noEmit`, `expo-doctor` (21/21) y revisión visual en `npm run web`.
 - Modelo de dominio: entidad `Avistamiento`/`Clima`, validación del formulario (RF-01) y traducción del `weather_code` WMO a texto + ícono (`modelo/clima.ts`).
+- Ingeniería (fase 8): suite de **53 tests con jest + `jest-expo`** sobre la lógica pura — `validacion.ts` (RF-01), `clima.ts` (WMO), `construirClima` de `ClimaApi.ts` (sin red) y `vista/formato.ts` — con el mock oficial de AsyncStorage (`jest.setup.ts`); `npx tsc --noEmit` limpio y `expo-doctor` 21/21.
 - Registro completo (RF-01): foto tomada en el momento con `expo-camera`, GPS automático con botón «Actualizar ubicación» (`expo-location`, timeout 10 s), fecha editable, cantidad mínima 1 y notas; valida por campo y confirma al guardar.
 - Clima del momento (RF-02): al capturar la ubicación se consulta **Open-Meteo** (`modelo/ClimaApi.ts`) con timeout real (AbortController 8 s) + 1 reintento y **caché por ubicación con TTL 15 min**; si la API falla o no hay red, el avistamiento se guarda igual, **sin clima**, y la pantalla avisa con opción a reintentar.
 
-**En construcción (próximas fases):**
+**Pendiente final (entrega):**
 
-- Ingeniería (fase 8 del roadmap): tests de `validacion.ts`, revisión `expo-doctor` ya pasada (21/21), y verificación final en teléfono con Expo Go (prueba de humo con cámara, GPS y clima en vivo).
+- Verificación en teléfono con Expo Go: prueba de humo con cámara, GPS y clima en vivo (registro real → listado → reabrir app → detalle con clima y lugar legibles), y el informe del examen (docs de stack.md §10–12: arquitectura, patrones, optimización de API, demo y declaración de uso de IA).
 
 ---
 
@@ -70,6 +71,7 @@ vista/        VISTA: componentes visuales compartidos
   TarjetaAvistamiento.tsx  Tarjeta del listado (avatar, badges, chips, clima; RF-03)
   Estado*.tsx       Estados de carga, error y vacío (con sombra e iconografía)
   formato.ts        Fechas legibles (compartido listado/detalle)
+modelo/__tests__/  Tests de la lógica pura (validación, WMO, ClimaApi, formato)
 docs/         brief.md (idea), stack.md (arquitectura), style.md (estilo visual) y roadmap.md (plan de trabajo)
 ```
 
@@ -124,4 +126,6 @@ El detalle funcional completo está en [docs/brief.md](docs/brief.md).
 | `npm run ios` | Abre la app en el simulador de iOS (solo macOS) |
 | `npm run web` | Abre la app en el navegador (solo desarrollo) |
 | `npx expo-doctor` | Verifica que el entorno esté sano (versiones de Node, dependencias) |
+| `npm test` | Corre la suite de tests (jest) una vez |
+| `npm run test:watch` | Corre los tests en modo vigilia (re-ejecuta al cambiar archivos) |
 | `npm start -- --tunnel` | Expone el dev server por túnel (útil cuando el teléfono no está en el mismo Wi-Fi) |

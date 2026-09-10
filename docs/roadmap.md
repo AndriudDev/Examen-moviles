@@ -77,11 +77,11 @@ Bitácora de avistamiento de aves (React Native + Expo SDK 57). Estado de avance
 
 Notas de implementación: `boxShadow` usa la API real de RN 0.86 (`offsetX/offsetY/blurRadius/spreadDistance`, no `offsetWidth`); `TextStyle` (campo) recibe el glow como string CSS; contraste verificado: `verdeClaro` (6.8:1) en el foco en vez de `primario` (2.6:1 sobre `superficie`, fallaría AA) — style.md §4.4 actualizado.
 
-### 8. Ingeniería
+### 8. Ingeniería — ✅ (fase 8 completada)
 
-- [ ] Tests — no hay ninguno; `validacion.ts` es pura y la más fácil de cubrir primero
-- [ ] Correr `expo-doctor` (entorno nunca verificado)
-- [ ] `EstadoCarga`/`EstadoError` no se consumen — se verifican en fases de periféricos
+- [x] Tests — jest + `jest-expo` instalados (`jest ~29.7.0` + `jest-expo ~57.0.5`, preset en `package.json`, `jest.setup.ts` con el mock oficial de AsyncStorage); **53 tests** sobre la lógica pura, la primera en `modelo/__tests__/validacion-test.ts` (RF-01: cada campo obligatorio con su mensaje, «no identificada» válido, límite 120 caracteres, cantidad entera ≥ 1), luego `modelo/__tests__/clima-test.ts` (tabla WMO completa con límites exactos y valores fuera de tabla → «Condición desconocida»), `modelo/__tests__/ClimaApi-test.ts` (`construirClima`, separada del fetch para probarse sin red: payload válido → `Clima` traducido, inválido → `null`) y `vista/__tests__/formato-test.ts` (fechas legibles deterministas en cualquier zona horaria). `npm test` → 53/53; `npx tsc --noEmit` limpio.
+- [x] Correr `expo-doctor` — 21/21 (re-verificado en esta fase; ya pasaba desde la fase 7)
+- [x] `EstadoCarga`/`EstadoError` se consumen — verificados en `app/index.tsx` (carga/error del listado), `app/registrar.tsx` (cámara, GPS, clima y guardado) y `app/detalle/[id].tsx` (carga y error con reintento)
 
 ---
 
@@ -108,3 +108,4 @@ Notas de implementación: `boxShadow` usa la API real de RN 0.86 (`offsetX/offse
 - Fase 5 (RF-05 Persistencia): repositorio `modelo/RepositoryAvistamientos.ts` completo — `guardarAvistamiento` (foto copiada de la caché de la cámara a documentos vía `expo-file-system`, metadatos en AsyncStorage), `leerAvistamientos` y `leerAvistamientoPorId`; el listado carga del repositorio al arrancar y recarga al recuperar el foco (`useFocusEffect` en `app/index.tsx`); datos y fotos sobreviven al cierre de la app.
 - Fase 6 (RF-06 Navegación): vuelta al origen correcto desde cada pantalla — botón «Volver al listado» en el detalle y en el registro con fallback `canGoBack()` (vuelta nativa o `push('/')` sin historial); tras guardar, toast de confirmación (`vista/Toast.tsx`) que devuelve directo al listado ya refrescado.
 - Fase 7 (Estilo): sistema de diseño de `docs/style.md` implementado — tokens (`tipografia`, `sombra` `boxShadow` nativa, +10 colores), cabecera compartida con tira de acento (`vista/Cabecera.tsx`, header nativo del Stack oculto), FAB único, `TarjetaAvistamiento` nueva (avatar de iniciales pendiente de asset, badge ×cantidad, chips, clima grande), hero del estado vacío con avatar `AV`, `EstadoCarga`/`EstadoError` con sombra e iconografía (glifo en círculo), campos con foco verde + glow (`vista/CampoTexto.tsx`); verificado con `npx tsc --noEmit`, `expo-doctor` (21/21) y revisión visual en `npm run web`.
+- Fase 8 (Ingeniería): tests de lógica pura con jest + `jest-expo` — `validacion.ts` (RF-01), `clima.ts` (WMO), `construirClima` de `ClimaApi.ts` (sin red) y `vista/formato.ts` (fechas deterministas), 53 tests en `npm test` + `npx tsc --noEmit` limpio y `expo-doctor` 21/21; `package.json` con scripts `test`/`test:watch` y preset `jest-expo` (+ mock oficial de AsyncStorage en `jest.setup.ts`).
