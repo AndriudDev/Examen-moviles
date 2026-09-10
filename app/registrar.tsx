@@ -1,5 +1,5 @@
 import { CameraView } from 'expo-camera';
-import { useRouter } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Image, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 
@@ -128,6 +128,7 @@ export default function PantallaRegistro() {
 
   return (
     <ScrollView style={[estilo.pantalla, { flex: 1 }]} contentContainerStyle={{ padding: tamano.espacioGrande }}>
+      <Stack.Title>Nuevo avistamiento</Stack.Title>
       {guardadoOk ? renderConfirmacion(() => router.back()) : (
         <>
           <Text style={estilo.tituloPantalla}>Nuevo avistamiento</Text>
@@ -321,6 +322,9 @@ export default function PantallaRegistro() {
           >
             <Text style={estilo.botonPrimarioTexto}>{guardando ? 'Guardando…' : 'Guardar avistamiento'}</Text>
           </Pressable>
+          {/* Aire inferior: el padding del ScrollView no siempre pinta al final; este
+              espaciador evita que el botón quede pegado/cortado al borde de la pantalla. */}
+          <View style={{ height: tamano.espacioGrande * 2 }} />
         </>
       )}
     </ScrollView>
@@ -348,6 +352,7 @@ function renderConfirmacion(volverAlListado: () => void) {
       >
         <Text style={estilo.botonPrimarioTexto}>Volver al listado</Text>
       </Pressable>
+      <View style={{ height: tamano.espacioGrande * 2 }} />
     </View>
   );
 }

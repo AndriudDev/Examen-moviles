@@ -1,4 +1,4 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 
 import { color, estilo, tamano } from '../../vista/tema';
@@ -15,6 +15,7 @@ export default function PantallaDetalle() {
 
   return (
     <View style={estilo.pantalla}>
+      <Stack.Title>Detalle</Stack.Title>
       <Text style={estilo.tituloPantalla}>Detalle del avistamiento</Text>
       {typeof id === 'string' && (
         <Text style={[estilo.subtitulo, { marginTop: tamano.espacio }]}>ID: {id}</Text>

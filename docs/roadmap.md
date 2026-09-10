@@ -15,6 +15,7 @@ Bitácora de avistamiento de aves (React Native + Expo SDK 57). Estado de avance
 | Persistencia (guardado) | `modelo/RepositoryAvistamientos.ts`: metadatos en AsyncStorage + foto copiada a archivo persistente (`expo-file-system`); la lectura llega con la fase RF-03 |
 | Controlador | `controlador/ControladorRegistro.ts` valida y guarda; `controlador/camara.ts` y `controlador/ubicacion.ts` aíslan `expo-camera`/`expo-location` (patrón Adapter) |
 | Estados | `EstadoVacio`/`EstadoCarga`/`EstadoError` en `vista/` (consumidos en carga de GPS, cámara y guardado) |
+| Tema | Sistema oscuro **inspirado en Bootstrap dark v5.3** en `vista/tema.ts` (`#212529`/`#2B3035`/`#495057`, botones radio 6, tarjetas borde 1px) + `userInterfaceStyle: "dark"`; header del Stack fusionado con el cuerpo |
 | Dependencias | `expo-camera`, `expo-location`, `expo-file-system`, `AsyncStorage` instaladas y en uso |
 
 ---

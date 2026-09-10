@@ -16,7 +16,7 @@ El proyecto tiene implementada la **fase 1 del roadmap (RF-01 Registro)**: el fo
 
 - Navegación con Expo Router (stack nativo): listado, registro y detalle con id dinámico.
 - Pantalla de listado con estado vacío diseñado y acceso directo al registro.
-- Tema de UI para uso en terreno: alto contraste, objetivos táctiles grandes.
+- Tema de UI para uso en terreno: **oscuro estilo Bootstrap dark** (fondo `#212529`, tarjetas con borde fino, botones redondeados, verde de marca como acción), alto contraste, objetivos táctiles grandes.
 - Modelo de dominio: entidad `Avistamiento`/`Clima` y validación del formulario (RF-01).
 - Registro completo (RF-01): foto tomada en el momento con `expo-camera`, GPS automático con botón «Actualizar ubicación» (`expo-location`, timeout 10 s), fecha editable, cantidad mínima 1 y notas; valida por campo y confirma al guardar.
 - Persistencia del guardado (RF-05, save path): metadatos en `AsyncStorage`, foto copiada de la caché a un archivo persistente con `expo-file-system`.

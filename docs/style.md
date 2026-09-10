@@ -19,7 +19,7 @@ Estado actual (antes de aplicar este documento):
 | Tarjetas mudas | `tarjeta` solo cambia fondo y borde; no separa visualmente el contenido |
 | Estados pobres | `EstadoCarga` es un spinner pequeño suelto; `EstadoError` es texto rojo sobre cartón blanco |
 
-Principio que guía la corrección: la app es una **bitácora de campo**, no un formulario quirúrgico. Debe sentirse hecha a mano, cálida y legible a contraluz — no plana ni generada por plantilla.
+Principio que guía la corrección: la app es una **bitácora de campo**, no un formulario quirúrgico. Debe sentirse hecha a mano, cálida y legible a contraluz — no plana ni generada por plantilla. Corre sobre **tema oscuro inspirado en Bootstrap dark (v5.3)**: fondo gris oscuro `#212529`, tarjetas `#2B3035` con borde fino, botones redondeados y badges píldora; un fondo oscuro deslumbra menos con sol en pantalla que uno claro (requisito de terreno).
 
 ---
 
@@ -37,30 +37,40 @@ Principio que guía la corrección: la app es una **bitácora de campo**, no un 
 
 ### 3.1 Color
 
-Paleta actual conservada como base; se agregan 7 tokens:
+Tema **oscuro** con sistema de diseño **inspirado en Bootstrap dark (v5.3)**
+(decisión de diseño: fondo oscuro deslumbra menos a contraluz). Paleta
+implementada en `vista/tema.ts`:
 
 ```ts
 export const color = {
-  // …existentes: fondo #F6F2E9, superficie #FFFFFF, texto #1F1F1F,
-  // textoSuave #5A5A5A, primario #2F6B3A, primarioTexto #FFFFFF,
-  // acento #C7791E, peligro #B3261E, borde #D9D3C6
-
-  superficieElevada: '#FFFDF9', // tarjetas y paneles sobre superficie blanca
-  primarioOscuro:   '#1E4A26', // cabeceras, fondo de badges principales
-  exito:            '#1B6B5A', // verde petróleo: clima OK, guardado
-  fondoAcento:      '#FBF3E4', // tinte ámbar para destacados suaves
-  tintaAve:         '#3E3A33', // marrón tinta: títulos sobre claro
-  sombraNivel1:     '#1F1F1F', // + opacidad 0.06, ver §3.4
-  sombraFuerte:     '#000000', // + opacidad 0.14, para FAB y modales
+  fondo: '#212529',        // --bs-body-bg: cuerpo de la app
+  superficie: '#2B3035',   // --bs-secondary-bg: tarjetas, campos y paneles
+  texto: '#DEE2E6',        // --bs-body-color: tinta principal
+  textoSuave: '#ADB5BD',   // --bs-secondary-color: metadatos y subtítulos
+  borde: '#495057',        // --bs-border-color: separación estilo Bootstrap
+  primario: '#2F6B3A',     // marca AvistAves: verde bosque (acción principal)
+  primarioTexto: '#FFFFFF',
+  verdeClaro: '#9FC39F',   // verde texto/borde sobre superficies oscuras
+  acento: '#D9A441',       // ámbar nocturno: acción secundaria/destacado
+  peligro: '#EF857A',      // rojo claro AA: error sobre cualquier superficie
 } as const;
+```
+
+Tokens de la fase de componentes (aún no en código; valores para tema oscuro):
+
+```ts
+superficieElevada: '#343A40', // --bs-tertiary-bg: paneles sobre superficie
+primarioOscuro:   '#24522B', // cabeceras, fondo de badges (texto blanco encima)
+exito:            '#2E8B6E', // verde: clima OK, guardado
+fondoAcento:      '#3A2F1C', // tinte ámbar para destacados suaves
 ```
 
 Reglas:
 
-- **Fondo crema** `#F6F2E9` es la "hoja de bitácora": todo el contenido vive sobre él.
-- **Verde bosque** `#2F6B3A` es la marca; `primarioOscuro` `#1E4A26` solo para cabeceras y sellos, nunca para botones.
-- **Texto**: `tintaAve` para títulos grandes, `texto` para cuerpo, `textoSuave` para metadatos. Nunca gris sobre gris.
-- Contraste mínimo garantizado: `textoSuave` (5A5A5A) sobre fondo (F6F2E9) = 6.3:1 ✅ AA; `acento` (C7791E) solo para texto ≥ 14px bold o como fondo con texto `#1F1F1F`.
+- **Fondo gris oscuro** `#212529` (Bootstrap body-bg) es el cuerpo; `superficie` `#2B3035` eleva tarjetas, campos y paneles sobre él.
+- La separación la hacen **bordes finos de 1px `#495057`** (el token `borde` de Bootstrap), no sombras ni bordes gruesos.
+- **Verde bosque** `#2F6B3A` es la marca y va en **fondos** (botones, FAB) con texto blanco encima (6.4:1). Como texto o borde sobre superficies oscuras se usa `verdeClaro` `#9FC39F` (≥ 6.8:1).
+- Contraste mínimo garantizado: `textoSuave` sobre `fondo` = 7.4:1 ✅ AA; `peligro` (`#EF857A`) sobre `superficie` = 5.3:1 ✅ AA; `acento` (`D9A441`) solo para texto ≥ 14px bold o como fondo con texto `#1F1F1F`.
 
 ### 3.2 Tipografía
 
@@ -119,6 +129,8 @@ export const sombra = {
 
 Umbral de uso: si una pieza no amerita sombra, tampoco amerita borde de 2px. El borde queda reservado para campos de formulario y chips (donde hay que **delimitar un área sobre fondo blanco**).
 
+> Sobre fondo oscuro las sombras negras casi no se perciben: al implementar elevación se sube la opacidad (p. ej. 0.30–0.40) o se acompaña con un borde superior sutil de `borde`.
+
 ---
 
 ## 4. Componentes
@@ -145,7 +157,7 @@ Contenido, de arriba hacia abajo:
 3. **Metadatos** — fila de chips: fecha, hora, lugar. Estilo chip:
    ```ts
    chip: {
-     backgroundColor: color.fondo,        // tinte crema, no blanco puro
+     backgroundColor: color.fondo,        // tinte del fondo, no superficie pura
      borderRadius: tamano.radioPildora,
      paddingVertical: 4, paddingHorizontal: 10,
    },
@@ -169,9 +181,9 @@ Icono + texto es obligatorio en el CTA principal de cada pantalla — un botón 
 ```ts
 campo: {
   backgroundColor: color.superficie,
-  borderWidth: 1.5,
+  borderWidth: 1,
   borderColor: color.borde,
-  borderRadius: tamano.radio,       // 12: contenido, no píldora
+  borderRadius: tamano.radioBoton,  // 6: radio Bootstrap (0.375rem)
   padding: 12,
   fontSize: 16,
   color: color.texto,
@@ -220,7 +232,7 @@ Un solo FAB por pantalla, siempre la misma esquina (abajo-derecha), y solo donde
 - [ ] ¿Hay jerarquía de al menos 3 tamaños/estilos de texto distintos?
 - [ ] ¿El CTA principal tiene icono + texto?
 - [ ] ¿El estado vacío tiene ilustración o avatar, no emoji desnudo?
-- [ ] ¿Los chips usan fondo crema y `micro` en mayúsculas con letter-spacing?
+- [ ] ¿Los chips usan el fondo del tema y `micro` en mayúsculas con letter-spacing?
 - [ ] ¿El foco de los campos se ve con borde verde + sombra?
 - [ ] ¿El botón responde a presión (scale 0.98, 120ms)?
 - [ ] ¿Ningún acento compite (un verde, un ámbar, un rojo máximo por vista)?

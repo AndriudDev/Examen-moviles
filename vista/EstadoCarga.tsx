@@ -9,7 +9,7 @@ import { color, estilo, tamano } from './tema';
 export function EstadoCarga({ mensaje }: { mensaje: string }) {
   return (
     <View style={[estilo.tarjeta, { flexDirection: 'row', alignItems: 'center', gap: tamano.espacio }]}>
-      <ActivityIndicator size="small" color={color.primario} />
+      <ActivityIndicator size="small" color={color.verdeClaro} />
       <Text style={{ fontSize: 15, color: color.texto, flexShrink: 1 }}>{mensaje}</Text>
     </View>
   );
