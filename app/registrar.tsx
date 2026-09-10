@@ -149,7 +149,7 @@ export default function PantallaRegistro() {
   return (
     <ScrollView style={[estilo.pantalla, { flex: 1 }]} contentContainerStyle={{ padding: tamano.espacioGrande }}>
       <Stack.Title>Nuevo avistamiento</Stack.Title>
-      {guardadoOk ? renderConfirmacion(() => router.back()) : (
+      {guardadoOk ? renderConfirmacion(() => (router.canGoBack() ? router.back() : router.push('/'))) : (
         <>
           <Text style={estilo.tituloPantalla}>Nuevo avistamiento</Text>
           <Text style={[estilo.subtitulo, { marginTop: tamano.espacioCompacto }]}>

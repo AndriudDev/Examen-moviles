@@ -10,18 +10,18 @@ Bitácora de avistamiento de aves en terreno. Proyecto de la asignatura **Desarr
 
 ## Estado actual
 
-El proyecto tiene implementadas las **fases 1, 2, 3 y 4 del roadmap**: el formulario real con foto del momento y GPS, el clima del momento con Open-Meteo (con caché, timeout y reintento), el guardado en el dispositivo, el **listado con los datos reales** (RF-03) y el **detalle completo** (RF-04).
+El proyecto tiene implementadas las **fases 1, 2, 3, 4, 5 y 6 del roadmap**: el formulario real con foto del momento y GPS, el clima del momento con Open-Meteo (con caché, timeout y reintento), el guardado en el dispositivo, el **listado con los datos reales** (RF-03), el **detalle completo** (RF-04), la **persistencia local** (RF-05) y la **navegación completa** (RF-06).
 
 **Funciona hoy:**
 
-- Navegación con Expo Router (stack nativo): listado, registro y detalle con id dinámico.
+- Navegación completa con Expo Router (RF-06): stack nativo con listado, registro y detalle con id dinámico; botón «Volver al listado» desde cada pantalla con fallback si no hay historial, y vuelta al origen tras guardar.
 - Pantalla principal de **listado real (RF-03)**: carga desde el repositorio ordenada por fecha (más reciente primero), tarjetas con miniatura, nombre, cantidad, fecha y temperatura (o indicador de «clima no disponible»), **filtro por nombre del ave** y estado vacío diseñado cuando no hay avistamientos; las tarjetas navegan al detalle.
-- **Detalle completo (RF-04)**: foto grande persistente, todos los datos del avistamiento, clima legible (ícono + condición + temperatura + humedad, nunca el `weather_code` crudo) y **lugar legible** con reverse geocoding (`reverseGeocodeAsync` de `expo-location`); estados de carga, error con reintento y aviso «lugar/clima no disponibles» sin bloquear la vista (RF-06: vuelta al listado siempre disponible).
+- **Detalle completo (RF-04)**: foto grande persistente, todos los datos del avistamiento, clima legible (ícono + condición + temperatura + humedad, nunca el `weather_code` crudo) y **lugar legible** con reverse geocoding (`reverseGeocodeAsync` de `expo-location`); estados de carga, error con reintento y aviso «lugar/clima no disponibles» sin bloquear la vista.
+- Persistencia (RF-05): metadatos en `AsyncStorage`, foto copiada de la caché a un archivo persistente con `expo-file-system`; el listado y el detalle leen el mismo repositorio al arrancar y el listado se recarga al recuperar el foco (`useFocusEffect`) — los datos y las fotos sobreviven al cierre de la app.
 - Tema de UI para uso en terreno: **oscuro estilo Bootstrap dark** (fondo `#212529`, tarjetas con borde fino, botones redondeados, verde de marca como acción), alto contraste, objetivos táctiles grandes.
 - Modelo de dominio: entidad `Avistamiento`/`Clima`, validación del formulario (RF-01) y traducción del `weather_code` WMO a texto + ícono (`modelo/clima.ts`).
 - Registro completo (RF-01): foto tomada en el momento con `expo-camera`, GPS automático con botón «Actualizar ubicación» (`expo-location`, timeout 10 s), fecha editable, cantidad mínima 1 y notas; valida por campo y confirma al guardar.
 - Clima del momento (RF-02): al capturar la ubicación se consulta **Open-Meteo** (`modelo/ClimaApi.ts`) con timeout real (AbortController 8 s) + 1 reintento y **caché por ubicación con TTL 15 min**; si la API falla o no hay red, el avistamiento se guarda igual, **sin clima**, y la pantalla avisa con opción a reintentar.
-- Persistencia (RF-05): metadatos en `AsyncStorage`, foto copiada de la caché a un archivo persistente con `expo-file-system`; el listado y el detalle leen el mismo repositorio al arrancar.
 
 **En construcción (próximas fases):**
 

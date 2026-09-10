@@ -1,5 +1,5 @@
-import { Stack, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { Stack, useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 
 import { cargarAvistamientos, filtrarPorNombre } from '../controlador/ControladorListado';
@@ -24,11 +24,8 @@ export default function PantallaListado() {
   const [avistamientos, setAvistamientos] = useState<Avistamiento[]>([]);
   const [filtro, setFiltro] = useState('');
 
-  useEffect(() => {
-    void recargar();
-  }, []);
-
-  async function recargar(): Promise<void> {
+  /** Carga los avistamientos desde el repositorio del dispositivo (RF-05). */
+  const recargar = useCallback(async (): Promise<void> => {
     setCargando(true);
     setErrorCarga(undefined);
     try {
@@ -38,7 +35,16 @@ export default function PantallaListado() {
     } finally {
       setCargando(false);
     }
-  }
+  }, []);
+
+  // Carga al montar y recarga cada vez que la pantalla recupera el foco: el
+  // Stack mantiene esta ruta montada bajo registrar/detalle, así que volver
+  // tras un guardado debe refrescar la lista desde el repositorio (RF-05/RF-06).
+  useFocusEffect(
+    useCallback(() => {
+      void recargar();
+    }, [recargar]),
+  );
 
   const visibles = filtrarPorNombre(avistamientos, filtro);
 

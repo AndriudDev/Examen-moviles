@@ -8,12 +8,12 @@ Bitácora de avistamiento de aves (React Native + Expo SDK 57). Estado de avance
 
 | Pieza | Detalle |
 |---|---|
-| Navegación | 3 rutas (`app/index.tsx`, `app/registrar.tsx`, `app/detalle/[id].tsx`) + `_layout.tsx` con Stack (RF-06 base) |
+| Navegación | 3 rutas (`app/index.tsx`, `app/registrar.tsx`, `app/detalle/[id].tsx`) + `_layout.tsx` con Stack (RF-06 completo: vuelta al origen desde cada pantalla y listado que recarga al recuperar el foco) |
 | Modelo | Tipos `Avistamiento`/`Clima`, `nuevaId()`, `nuevaFechaLocal()` en `modelo/Avistamiento.ts` |
 | Validación | RF-01 completa en `modelo/validacion.ts` (foto, ubicación, nombre, cantidad) |
 | Registro (RF-01) | Formulario real en `app/registrar.tsx` con foto del momento (`expo-camera`), GPS automático + botón «Actualizar ubicación» (`expo-location`), validación por campo y confirmación al guardar |
 | Clima (RF-02) | `modelo/ClimaApi.ts` consulta Open-Meteo tras capturar la ubicación: timeout real (AbortController 8 s) + 1 reintento + caché por ubicación con TTL 15 min; si falla, la app guarda igual sin clima. `modelo/clima.ts` traduce el `weather_code` WMO a texto + ícono |
-| Persistencia (guardado) | `modelo/RepositoryAvistamientos.ts`: metadatos en AsyncStorage + foto copiada a archivo persistente (`expo-file-system`); la lectura llega con la fase RF-03 |
+| Persistencia (RF-05) | `modelo/RepositoryAvistamientos.ts`: metadatos en AsyncStorage + foto copiada de caché a archivo persistente (`expo-file-system`); lectura completa (listado y detalle) desde el mismo repositorio |
 | Controlador | `controlador/ControladorRegistro.ts` valida y guarda; `controlador/camara.ts` y `controlador/ubicacion.ts` aíslan `expo-camera`/`expo-location` (patrón Adapter) |
 | Detalle (RF-04) | `app/detalle/[id].tsx` + `controlador/ControladorDetalle.ts`: carga por id (`leerAvistamientoPorId`), foto grande, clima y lugar legibles (reverse geocoding con timeout 8 s, degrada «no disponible»); estados carga/error/inexistente |
 | Estados | `EstadoVacio`/`EstadoCarga`/`EstadoError` en `vista/` (consumidos en carga de GPS, cámara y guardado) |
@@ -54,16 +54,16 @@ Bitácora de avistamiento de aves (React Native + Expo SDK 57). Estado de avance
 - [x] Clima y lugar legibles: reverse geocoding con `expo-location` en `controlador/ubicacion.ts` (`obtenerLugarLegible`, timeout 8 s, degrada a «Lugar no disponible» sin bloquear); clima con ícono + condición + temperatura + humedad, nunca el `weather_code` crudo
 - [x] Orquestación en `controlador/ControladorDetalle.ts`; estados carga/error/inexistente con reintento y vuelta al listado (RF-06)
 
-### 5. RF-05 Persistencia — no existe nada
+### 5. RF-05 Persistencia — ✅ (fase 5 completada)
 
-- [ ] Repositorio sobre `AsyncStorage` (CRUD de `Avistamiento`)
-- [ ] Mover la foto capturada de caché a archivo persistente vía `expo-file-system`
-- [ ] Cargar el listado al arrancar; sobrevive al cierre
+- [x] Repositorio sobre `AsyncStorage` (CRUD: `guardarAvistamiento`, `leerAvistamientos`, `leerAvistamientoPorId`; editar/borrar fuera de alcance, brief §8)
+- [x] Mover la foto capturada de caché a archivo persistente vía `expo-file-system` (`moverFotoAArchivoPersistente`: caché de la cámara → documentos del dispositivo)
+- [x] Cargar el listado al arrancar; sobrevive al cierre (recarga del repositorio al montar y al recuperar el foco)
 
-### 6. RF-06 Navegación — casi completo
+### 6. RF-06 Navegación — ✅ (fase 6 completada)
 
 - [x] Enlazar tarjetas del listado real → detalle (fase 3)
-- [ ] Volver desde cada pantalla al origen correcto
+- [x] Volver desde cada pantalla al origen correcto: botón «Volver al listado» en detalle y registro con fallback `canGoBack()` (vuelta nativa o `push('/')` si no hay historial); tras guardar, confirmación → listado; el listado recarga con `useFocusEffect` al recuperar el foco, así el registro nuevo aparece sin reiniciar la app
 
 ### 7. Estilo — spec lista en docs/style.md, nada implementado
 
@@ -103,3 +103,5 @@ Bitácora de avistamiento de aves (React Native + Expo SDK 57). Estado de avance
 - Fase 2 (RF-02 Clima Open-Meteo): `modelo/ClimaApi.ts` (fetch con timeout + reintento + caché por ubicación con TTL), `modelo/clima.ts` (WMO → texto/ícono) e integración en el registro: tras capturar el GPS se consulta el clima y, si la API falla, se guarda igual sin clima.
 - Fase 3 (RF-03 Listado): lectura del repositorio (`leerAvistamientos`), `controlador/ControladorListado.ts` (carga ordenada por fecha desc + filtro por nombre), `vista/TarjetaAvistamiento.tsx` (miniatura, nombre, cantidad, fecha, temperatura o «sin clima») y `app/index.tsx` con estados carga/error/vacío; las tarjetas navegan al detalle (RF-06).
 - Fase 4 (RF-04 Detalle): `controlador/ControladorDetalle.ts` + `leerAvistamientoPorId` en el repositorio; pantalla `app/detalle/[id].tsx` con foto grande, todos los datos, clima legible (ícono + condición + temperatura + humedad) y lugar legible vía reverse geocoding (`obtenerLugarLegible` en `controlador/ubicacion.ts`, timeout 8 s, degrada sin bloquear); estados de carga/error/inexistente con reintento y vuelta al listado; `vista/formato.ts` compartido con la tarjeta del listado.
+- Fase 5 (RF-05 Persistencia): repositorio `modelo/RepositoryAvistamientos.ts` completo — `guardarAvistamiento` (foto copiada de la caché de la cámara a documentos vía `expo-file-system`, metadatos en AsyncStorage), `leerAvistamientos` y `leerAvistamientoPorId`; el listado carga del repositorio al arrancar y recarga al recuperar el foco (`useFocusEffect` en `app/index.tsx`); datos y fotos sobreviven al cierre de la app.
+- Fase 6 (RF-06 Navegación): vuelta al origen correcto desde cada pantalla — botón «Volver al listado» en el detalle y en el registro con fallback `canGoBack()` (vuelta nativa o `push('/')` sin historial); tras guardar, confirmación que devuelve al listado ya refrescado.

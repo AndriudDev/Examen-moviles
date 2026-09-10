@@ -6,12 +6,12 @@ import type { Avistamiento } from './Avistamiento';
 /**
  * Repositorio de avistamientos (RF-05).
  *
- * Fase 1: implementa únicamente la ruta de guardado que consume el registro
- * (RF-01). «AsyncStorage (metadatos) + fotos como archivos persistentes»
- * (stack.md §5): la foto capturada por la cámara vive en la caché temporal del
- * dispositivo; al guardar se copia al almacenamiento persistente de la app y
- * el registro guarda la URI de ese archivo. La lectura (listar/cargar) llega
- * con la fase de listado (RF-03).
+ * Implementación completa: «AsyncStorage (metadatos) + fotos como archivos
+ * persistentes» (stack.md §5). La foto capturada por la cámara vive en la
+ * caché temporal del dispositivo; al guardar se copia al almacenamiento
+ * persistente de la app y el registro guarda la URI de ese archivo. La lectura
+ * (listado y detalle) consume el mismo repositorio, de modo que los datos
+ * sobreviven al cierre de la app.
  */
 const CLAVE_LISTA = 'avistaves.registros';
 const CARPETA_FOTOS = 'avistaves-fotos';
